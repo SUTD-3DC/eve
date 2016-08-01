@@ -1,6 +1,7 @@
 'use strict';
 const electron = require('electron');
 const app = electron.app;
+const spawn = require("child_process").spawn; // spawns a python process
 
 // adds debug features like hotkeys for triggering dev tools and reload
 require('electron-debug')();
@@ -24,6 +25,10 @@ function createMainWindow() {
   win.setFullScreen(true);
 	win.on('closed', onClosed);
 
+  var process = spawn('python',["snowboy/demo.py", "snowboy/resources/snowboy.umdl"]);
+  process.stdout.on('data', function (data){
+    console.log(data.toString());
+  });
 	return win;
 }
 

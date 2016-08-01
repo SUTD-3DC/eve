@@ -6,6 +6,8 @@ body {
 
 body {
 	font-family: -apple-system, 'Helvetica Neue', Helvetica, sans-serif;
+  background-color: #000;
+  color: #fff;
 }
 
 header {

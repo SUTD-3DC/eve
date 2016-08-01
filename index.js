@@ -21,6 +21,7 @@ function createMainWindow() {
 	});
 
 	win.loadURL(`file://${__dirname}/index.html`);
+  win.setFullScreen(true);
 	win.on('closed', onClosed);
 
 	return win;

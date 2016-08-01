@@ -4,14 +4,25 @@
 		<meta charset="utf-8">
 		<title>Eve</title>
 		<link rel="stylesheet" href="index.css">
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script>if (window.module) module = window.module;</script>
 	</head>
 	<body>
 		<div class="container">
 			<header>
 				<h1>Hello!</h1>
+        <div id="ding">Ding!</div>
 			</header>
-			<section class="main"></section>
+			<section class="main">
+      </section>
 			<footer></footer>
 		</div>
 	</body>
+  <script>
+    require('electron').ipcRenderer.on('keyword-spotted', (event, message) => {
+      $("#ding").show();
+      $("#ding").fadeOut("slow");
+    })
+  </script>
 </html>

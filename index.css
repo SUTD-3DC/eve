@@ -9,7 +9,9 @@ body {
   background-color: #000;
   color: #fff;
 }
-
+#ding {
+  display: none;
+}
 header {
 	position: absolute;
 	width: 500px;

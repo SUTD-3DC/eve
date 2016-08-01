@@ -21,7 +21,8 @@
     "index.css"
   ],
   "dependencies": {
-    "electron-debug": "^1.0.1"
+    "electron-debug": "^1.0.1",
+    "jquery": "^3.1.0"
   },
   "devDependencies": {
     "devtron": "^1.2.1",

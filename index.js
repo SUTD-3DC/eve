@@ -26,9 +26,12 @@ function createMainWindow() {
 	win.on('closed', onClosed);
 
   var process = spawn('python',["snowboy/demo.py", "snowboy/resources/snowboy.umdl"]);
+
   process.stdout.on('data', function (data){
     console.log(data.toString());
+    mainWindow.webContents.send('keyword-spotted', true)
   });
+
 	return win;
 }
 

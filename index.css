@@ -9,9 +9,7 @@ body {
   background-color: #000;
   color: #fff;
 }
-#ding, #dong {
-  display: none;
-}
+
 header {
 	position: absolute;
 	width: 500px;
@@ -28,4 +26,21 @@ header h1 {
 	font-weight: 100;
 	margin: 0;
 	padding: 0;
+}
+
+.top-left {
+  position: absolute;
+  left: 2%;
+  top: 2%;
+}
+
+.bottom-center {
+  position: absolute;
+  left: 50%;
+  top: 75%;
+  width: 500px;
+  height: 250px;
+  margin-left: -250px;
+  margin-top: -125px;
+  text-align: center;
 }

@@ -36,7 +36,7 @@ function createMainWindow() {
     switch (str){
       case "weather":
         mainWindow.webContents.send("loading", true);
-        let url = `https://api.forecast.io/forecast/${config.weather.key}/1.352083,103.819836?units=${config.weather.units}`
+        let url = `https://api.forecast.io/forecast/${config.weather.key}/1.352083,103.819836?units=${config.weather.units}&exclude=minutely,hourly`
         var request = https.get(url, function (response) {
           // data is streamed in chunks from the server
           // so we have to handle the "data" event

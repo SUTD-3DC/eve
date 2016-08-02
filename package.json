@@ -24,7 +24,7 @@
     "electron-debug": "^1.0.1",
     "jquery": "^3.1.0",
     "node-wit": "^4.0.0",
-    "pocketsphinx": "github:cmusphinx/node-pocketsphinx"
+    "pocketsphinx": "^5.0.7"
   },
   "devDependencies": {
     "devtron": "^1.2.1",

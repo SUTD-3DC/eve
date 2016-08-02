@@ -2,8 +2,8 @@
 const electron = require('electron');
 const app = electron.app;
 const spawn = require("child_process").spawn; // spawns a python process
-const config = require('config');
-var http = require("http");
+const config = require('./config.js');
+var https = require("https");
 
 // adds debug features like hotkeys for triggering dev tools and reload
 require('electron-debug')();
@@ -36,8 +36,8 @@ function createMainWindow() {
     switch (str){
       case "weather":
         mainWindow.webContents.send("loading", true);
-        let url = `https://api.forecast.io/forecast/${config.weather.key}/1.352083,103.819836`
-        var request = http.get(url, function (response) {
+        let url = `https://api.forecast.io/forecast/${config.weather.key}/1.352083,103.819836?units=${config.weather.units}`
+        var request = https.get(url, function (response) {
           // data is streamed in chunks from the server
           // so we have to handle the "data" event
           var buffer = "",
@@ -50,6 +50,7 @@ function createMainWindow() {
 
           response.on("end", function (err) {
             data = JSON.parse(buffer);
+            console.log(data);
             mainWindow.webContents.send("weather", data)
           });
         });

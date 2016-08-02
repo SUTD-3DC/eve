@@ -11,7 +11,7 @@
 	<body>
 		<div class="container">
 			<header>
-				<h1>Hello!</h1>
+				<h1>Eve.</h1>
         <div id="ding">Ding!</div>
         <div id="dong">Dong!</div>
 			</header>
@@ -23,7 +23,7 @@
   <script>
     const electron = require('electron')
     electron.ipcRenderer.on('loading', (event, message) => {
-      $(".main").html("<h1>Loading..</h1>");
+      $(".main").html("<h2>Loading..</h2>");
     });
     electron.ipcRenderer.on('weather', (event, message) => {
       $(".main").html(message);

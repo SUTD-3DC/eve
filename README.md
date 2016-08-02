@@ -6,6 +6,7 @@ Electron app testbed!
 
 ```
 
+npm install -g cmake-js
 cp config.example.js config.js
 npm install && npm start
 

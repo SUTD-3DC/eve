@@ -5,7 +5,7 @@ body {
 }
 
 body {
-	font-family: -apple-system, 'Helvetica Neue', Helvetica, sans-serif;
+	font-family: 'Roboto', -apple-system, 'Helvetica Neue', Helvetica, sans-serif;
   background-color: #000;
   color: #fff;
 }
@@ -43,4 +43,35 @@ header h1 {
   margin-left: -250px;
   margin-top: -125px;
   text-align: center;
+}
+
+.thin {
+  font-weight: 100;
+}
+
+
+.xsmall {
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.small {
+  font-size: 20px;
+  line-height: 25px;
+}
+
+.medium {
+  font-size: 30px;
+  line-height: 35px;
+}
+
+.large {
+  font-size: 65px;
+  line-height: 65px;
+}
+
+.xlarge {
+  font-size: 75px;
+  line-height: 75px;
+  letter-spacing: -3px;
 }

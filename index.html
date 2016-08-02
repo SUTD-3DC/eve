@@ -21,17 +21,24 @@
 		</div>
 	</body>
   <script>
-    require('electron').ipcRenderer.on('keyword-spotted', (event, message) => {
-      switch(message.toString().trim()){
-        case "hello":
-          $("#ding").show();
-          $("#ding").fadeOut("slow");
-          break
-        case "weather":
-          $("#dong").show();
-          $("#dong").fadeOut("slow");
-          break
-      }
+    const electron = require('electron')
+    electron.ipcRenderer.on('loading', (event, message) => {
+      $(".main").html("<h1>Loading..</h1>");
+    });
+    electron.ipcRenderer.on('weather', (event, message) => {
+      $(".main").html(message);
     })
+    // require('electron').ipcRenderer.on('keyword-spotted', (event, message) => {
+    //   switch(message.toString().trim()){
+    //     case "hello":
+    //       $("#ding").show();
+    //       $("#ding").fadeOut("slow");
+    //       break
+    //     case "weather":
+    //       $("#dong").show();
+    //       $("#dong").fadeOut("slow");
+    //       break
+    //   }
+    // })
   </script>
 </html>

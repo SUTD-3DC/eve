@@ -13,6 +13,7 @@
 			<header>
 				<h1>Hello!</h1>
         <div id="ding">Ding!</div>
+        <div id="dong">Dong!</div>
 			</header>
 			<section class="main">
       </section>
@@ -21,8 +22,14 @@
 	</body>
   <script>
     require('electron').ipcRenderer.on('keyword-spotted', (event, message) => {
-      $("#ding").show();
-      $("#ding").fadeOut("slow");
+      switch(message){
+        case "hello":
+          $("#ding").show();
+          $("#ding").fadeOut("slow");
+        case "weather":
+          $("#dong").show();
+          $("#dong").fadeOut("slow");
+      }
     })
   </script>
 </html>

@@ -9,7 +9,7 @@ body {
   background-color: #000;
   color: #fff;
 }
-#ding {
+#ding, #dong {
   display: none;
 }
 header {

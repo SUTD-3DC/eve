@@ -25,11 +25,10 @@ function createMainWindow() {
   win.setFullScreen(true);
 	win.on('closed', onClosed);
 
-  var process = spawn('python',["snowboy/demo.py", "snowboy/resources/snowboy.umdl"]);
+  var process = spawn('python',["snowboy/demo.py", "snowboy/resources/snowboy.umdl", "snowboy/resources/weather.pmdl"]);
 
   process.stdout.on('data', function (data){
-    console.log(data.toString());
-    mainWindow.webContents.send('keyword-spotted', true)
+    mainWindow.webContents.send('keyword-spotted', data.toString());
   });
 
 	return win;

@@ -8,16 +8,16 @@ var https = require("https");
 
 // // pocketsphinx variables
 var fs = require("fs");
-// var ps = require('pocketsphinx').ps;
-// var modelDir = "../../pocketsphinx/model/en-us/";
-// var sphinxConfig = new ps.Decoder.defaultConfig();
+var ps = require('pocketsphinx').ps;
+var modelDir = "../../pocketsphinx/model/en-us/";
+var sphinxConfig = new ps.Decoder.defaultConfig();
 
-// // initialize config
-// sphinxConfig.setString("-hmm", modeldir + "en-us");
-// sphinxConfig.setString("-dict", modeldir + "cmudict-en-us.dict");
-// sphinxConfig.setString("-lm", modeldir + "en-us.lm.bin");
+// initialize config
+sphinxConfig.setString("-hmm", modelDir + "en-us");
+sphinxConfig.setString("-dict", modelDir + "cmudict-en-us.dict");
+sphinxConfig.setString("-lm", modelDir + "en-us.lm.bin");
 
-// var decoder = new ps.Decoder(sphinxConfig);
+var decoder = new ps.Decoder(sphinxConfig);
 
 // adds debug features like hotkeys for triggering dev tools and reload
 require('electron-debug')();
@@ -36,14 +36,6 @@ function createMainWindow() {
 		width: 600,
 		height: 400
 	});
-
-  // fs.readFile("../../pocketsphinx/test/data/goforward.raw", function(err, data) {
-  //     if (err) throw err;
-  //     decoder.startUtt();
-  //     decoder.processRaw(data, false, false);
-  //     decoder.endUtt();
-  //     console.log(decoder.hyp())
-  // });
 
 	win.loadURL(`file://${__dirname}/index.html`);
   win.setFullScreen(true);

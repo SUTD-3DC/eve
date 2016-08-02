@@ -28,7 +28,9 @@ function createMainWindow() {
   var process = spawn('python',["snowboy/demo.py", "snowboy/resources/snowboy.umdl", "snowboy/resources/weather.pmdl"]);
 
   process.stdout.on('data', function (data){
-    mainWindow.webContents.send('keyword-spotted', data.toString());
+    var str = data.toString();
+    console.log(str);
+    mainWindow.webContents.send('keyword-spotted', str);
   });
 
 	return win;

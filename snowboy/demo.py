@@ -33,9 +33,8 @@ signal.signal(signal.SIGINT, signal_handler)
 
 sensitivity = [0.5]*len(models)
 detector = snowboydecoder.HotwordDetector(models, sensitivity=sensitivity)
-callbacks = [callback_to_node(snowboydecoder.DETECT_DING, "hello"),
-             callback_to_node(snowboydecoder.DETECT_DONG, "weather")]
-print('Listening... Press Ctrl+C to exit')
+callbacks = [lambda: callback_to_node(snowboydecoder.DETECT_DING, "hello"),
+             lambda: callback_to_node(snowboydecoder.DETECT_DONG, "weather")]
 
 # main loop
 # make sure you have the same numbers of callbacks and models

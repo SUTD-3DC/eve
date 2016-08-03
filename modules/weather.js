@@ -1,7 +1,13 @@
 const electron = require('electron');
 
 electron.ipcRenderer.on('loading', (event, message) => {
-  $(".main").html("<h2 class='bottom-center'>Loading..</h2>");
+  if (message){
+    $(".main").html("<h2 class='bottom-center'>Loading..</h2>");
+  }
+  else {
+    $(".main").html("");
+  }
+
 });
 
 var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Monday"];

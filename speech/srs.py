@@ -5,7 +5,7 @@ import signal
 interrupted = False
 
 def callback_to_node():
-  snowboydecoder.play_audio_file
+  snowboydecoder.play_audio_file(snowboydecoder.DETECT_DING)
   print("hotword")
   sys.stdout.flush()
 

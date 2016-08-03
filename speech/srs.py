@@ -2,10 +2,12 @@ import snowboydecoder
 import sys
 import signal
 
-# Demo code for listening two hotwords at the same time
-
 interrupted = False
 
+def callback_to_node():
+  snowboydecoder.play_audio_file
+  print("hotword")
+  sys.stdout.flush()
 
 def signal_handler(signal, frame):
     global interrupted
@@ -16,29 +18,20 @@ def interrupt_callback():
     global interrupted
     return interrupted
 
-def callback_to_node(audio, keyword):
-  snowboydecoder.play_audio_file(audio)
-  print(keyword)
-  sys.stdout.flush()
-
-if len(sys.argv) != 3:
-    print("Error: need to specify 2 model names")
-    print("Usage: python demo.py 1st.model 2nd.model")
+if len(sys.argv) == 1:
+    print("Error: need to specify model name")
+    print("Usage: python demo.py your.model")
     sys.exit(-1)
 
-models = sys.argv[1:]
+model = sys.argv[1]
 
 # capture SIGINT signal, e.g., Ctrl+C
 signal.signal(signal.SIGINT, signal_handler)
 
-sensitivity = [0.5]*len(models)
-detector = snowboydecoder.HotwordDetector(models, sensitivity=sensitivity)
-callbacks = [lambda: callback_to_node(snowboydecoder.DETECT_DING, "hello"),
-             lambda: callback_to_node(snowboydecoder.DETECT_DONG, "weather")]
+detector = snowboydecoder.HotwordDetector(model, sensitivity=0.5)
 
 # main loop
-# make sure you have the same numbers of callbacks and models
-detector.start(detected_callback=callbacks,
+detector.start(detected_callback=callback_to_node,
                interrupt_check=interrupt_callback,
                sleep_time=0.03)
 

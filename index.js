@@ -56,15 +56,14 @@ function createMainWindow() {
   win.setFullScreen(true);
   win.on('closed', onClosed);
 
-  var process = spawn('python',["speech/srs.py", "speech/resources/snowboy.umdl",
-   "speech/resources/weather.pmdl"]);
+  var process = spawn('python',["speech/srs.py", "speech/resources/hotword.pmdl"]);
 
   process.stdout.on('data', function (data){
     var str = data.toString().trim();
     console.log(str);
     // change switch to record a voice message
     switch (str){
-      case "weather":
+      case "hotword":
         mainWindow.webContents.send("loading", true);
         getAudioInput();
         // let url = `https://api.forecast.io/forecast/${config.weather.key}/1.352083,103.819836?units=${config.weather.units}&exclude=minutely,hourly`

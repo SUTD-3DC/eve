@@ -40,15 +40,13 @@ function getAudioInput(){
   // for jessie:
   exec('ffmpeg -f avfoundation -i ":0" -t 2 -ar 16000 -ac 1 -sample_fmt s16 out.wav', function(){
     fs.readFile("out.wav", function(err, data) {
-      if (err) throw err;
-      speech.speech.speech.syncrecognize({
+      speech.speech.syncrecognize({
         "audio": data,
         "config": {
           "sampleRate": 16000,
           "encoding": "wav",
         }
       }, function(err, response){
-        if (err) console.log(err);
         fs.unlink("out.wav")
         console.log(response);
         mainWindow.webContents.send("decode", response);

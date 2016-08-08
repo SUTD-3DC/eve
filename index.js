@@ -5,6 +5,7 @@ const spawn = require("child_process").spawn; // spawns a python process
 const exec = require('child_process').exec;
 const config = require('./config.js');
 
+var google = require('googleapis');
 var https = require("https");
 
 // // pocketsphinx variables
@@ -12,6 +13,9 @@ var fs = require("fs");
 var ps = require('pocketsphinx').ps;
 var modelDir = "../pocketsphinx/model/en-us/";
 var sphinxConfig = new ps.Decoder.defaultConfig();
+
+// Google Speech variables
+var speech = google.speech('v1beta1');
 
 // initialize config
 sphinxConfig.setString("-hmm", modelDir + "en-us");
@@ -37,13 +41,27 @@ function getAudioInput(){
   exec('ffmpeg -f avfoundation -i ":0" -t 2 -ar 16000 -ac 1 -sample_fmt s16 out.wav', function(){
     fs.readFile("out.wav", function(err, data) {
       if (err) throw err;
-      decoder.startUtt();
-      decoder.processRaw(data, false, false);
-      decoder.endUtt();
-      fs.unlink("out.wav");
-      console.log(decoder.hyp());
-      mainWindow.webContents.send("decode", decoder.hyp().hypstr);
-      mainWindow.webContents.send("loading", false);
+      speech.speech.speech.syncrecognize({
+        "audio": data,
+        "config": {
+          "sampleRate": 16000,
+          "encoding": "wav",
+        }
+      }, function(err, response){
+        if (err) console.log(err);
+        fs.unlink("out.wav")
+        console.log(response);
+        mainWindow.webContents.send("decode", response);
+        mainWindow.webContents.send("loading", false);
+      });
+      // decoder.startUtt();
+      // decoder.processRaw(data, false, false);
+      // decoder.endUtt();
+      // fs.unlink("out.wav");
+      // console.log(decoder.hyp());
+      // mainWindow.webContents.send("decode", decoder.hyp().hypstr);
+      // mainWindow.webContents.send("loading", false);
+
       // let url = `https://api.forecast.io/forecast/${config.weather.key}/1.352083,103.819836?units=${config.weather.units}&exclude=minutely,hourly`
       // var request = https.get(url, function (response) {
       //   // data is streamed in chunks from the server

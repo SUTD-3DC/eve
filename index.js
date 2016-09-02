@@ -1,16 +1,14 @@
 'use strict';
 const electron = require('electron');
+const remote = electron.remote;
 const app = electron.app;
 const spawn = require("child_process").spawn; // spawns a python process
 const exec = require('child_process').exec;
 const config = require('./config.js');
-
 var request = require("request");
 
 // // pocketsphinx variables
 var fs = require("fs");
-var key = require('./.keyfile.json');
-
 // adds debug features like hotkeys for triggering dev tools and reload
 require('electron-debug')();
 

@@ -9,16 +9,7 @@ var request = require("request");
 
 // // pocketsphinx variables
 var fs = require("fs");
-var ps = require('pocketsphinx').ps;
-var modelDir = "../pocketsphinx/model/en-us/";
-var sphinxConfig = new ps.Decoder.defaultConfig();
-
-
-// initialize config
-sphinxConfig.setString("-hmm", modelDir + "en-us");
-sphinxConfig.setString("-dict", modelDir + "cmudict-en-us.dict");
-sphinxConfig.setString("-lm", "./speech/resources/en-70k-0.2.lm.bin");
-var decoder = new ps.Decoder(sphinxConfig);
+var key = require('./.keyfile.json');
 
 // adds debug features like hotkeys for triggering dev tools and reload
 require('electron-debug')();
@@ -35,65 +26,32 @@ function onClosed() {
 function getAudioInput(){
   // for osx:    ffmpeg -f avfoundation -i ":0" -t 3 -ar 16000 -ac 1 -sample_fmt s16 out.wav
   // for jessie:
-
-  console.log("reached here");
-  exec('ffmpeg -f avfoundation -i ":0" -t 3 -ar 16000 -ac 1 -sample_fmt s16 out.wav', function(){
+  exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', function(){
     fs.readFile("out.wav", function(err, data) {
-
-      var post_data = {
-        "audio": data,
-        "config": {
-          "sampleRate": 16000,
-          "encoding": "wav",
+      request.post({
+        headers: { 'Content-Type': 'application/json', 'Authorization': config.speech.key},
+        url: 'https://speech.googleapis.com/v1beta1/speech:syncrecognize',
+        json: {
+          "config": {
+            "encoding":"LINEAR16",
+            "sample_rate": 16000
+          },
+          "audio": {
+            "content": data.toString('base64')
+          }
         }
-      }
-
-      request.post({url: 'https://speech.googleapis.com/v1beta1/speech:syncrecognize', post_data}, function(err, httpResponse, body){
+      }, function(err, httpResponse, body){
+        console.log(httpResponse);
         if (err) {
           return console.error(err);
         }
-        fs.unlink("out.wav");
-        console.log(body);
-        mainWindow.webContents.send("decode", body);
+        fs.unlink("out.wav")
+        console.log(body.results[0].alternatives[0].transcript);
+        mainWindow.webContents.send("decode", body.results[0].alternatives[0].transcript);
         mainWindow.webContents.send("loading", false);
       });
-
-      // speech.speech.syncrecognize(
-      //  d
-      // }, function(err, response){
-      //   fs.unlink("out.wav")
-      //   console.log(response);
-      //   mainWindow.webContents.send("decode", response);
-      //   mainWindow.webContents.send("loading", false);
-      // });
-      // decoder.startUtt();
-      // decoder.processRaw(data, false, false);
-      // decoder.endUtt();
-      // fs.unlink("out.wav");
-      // console.log(decoder.hyp());
-      // mainWindow.webContents.send("decode", decoder.hyp().hypstr);
-      // mainWindow.webContents.send("loading", false);
-
-      // let url = `https://api.forecast.io/forecast/${config.weather.key}/1.352083,103.819836?units=${config.weather.units}&exclude=minutely,hourly`
-      // var request = https.get(url, function (response) {
-      //   // data is streamed in chunks from the server
-      //   // so we have to handle the "data" event
-      //   var buffer = "",
-      //   data,
-      //   route;
-
-      //   response.on("data", function (chunk) {
-      //     buffer += chunk;
-      //   });
-
-      //   response.on("end", function (err) {
-      //     data = JSON.parse(buffer);
-      //     console.log(data);
-      //     mainWindow.webContents.send("weather", data)
-      //   });
-      // });
     });
-  })
+  });
 }
 
 function createMainWindow() {

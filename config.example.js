@@ -3,9 +3,9 @@ var config = {
     key: '',
     units : "auto",
   },
-  // clock: {
-  //   monthFormat: '%B' // follows the strftime format of Python / Ruby. http://strftime.org/
-  // }
+  speech: {
+    key: '',
+  }
 }
 
 // DO NOT REMOVE

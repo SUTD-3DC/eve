@@ -5,8 +5,7 @@ const spawn = require("child_process").spawn; // spawns a python process
 const exec = require('child_process').exec;
 const config = require('./config.js');
 
-var google = require('googleapis');
-var https = require("https");
+var request = require("request");
 
 // // pocketsphinx variables
 var fs = require("fs");
@@ -14,8 +13,6 @@ var ps = require('pocketsphinx').ps;
 var modelDir = "../pocketsphinx/model/en-us/";
 var sphinxConfig = new ps.Decoder.defaultConfig();
 
-// Google Speech variables
-var speech = google.speech('v1beta1');
 
 // initialize config
 sphinxConfig.setString("-hmm", modelDir + "en-us");
@@ -38,20 +35,37 @@ function onClosed() {
 function getAudioInput(){
   // for osx:    ffmpeg -f avfoundation -i ":0" -t 3 -ar 16000 -ac 1 -sample_fmt s16 out.wav
   // for jessie:
-  exec('ffmpeg -f avfoundation -i ":0" -t 2 -ar 16000 -ac 1 -sample_fmt s16 out.wav', function(){
+
+  console.log("reached here");
+  exec('ffmpeg -f avfoundation -i ":0" -t 3 -ar 16000 -ac 1 -sample_fmt s16 out.wav', function(){
     fs.readFile("out.wav", function(err, data) {
-      speech.speech.syncrecognize({
+
+      var post_data = {
         "audio": data,
         "config": {
           "sampleRate": 16000,
           "encoding": "wav",
         }
-      }, function(err, response){
-        fs.unlink("out.wav")
-        console.log(response);
-        mainWindow.webContents.send("decode", response);
+      }
+
+      request.post({url: 'https://speech.googleapis.com/v1beta1/speech:syncrecognize', post_data}, function(err, httpResponse, body){
+        if (err) {
+          return console.error(err);
+        }
+        fs.unlink("out.wav");
+        console.log(body);
+        mainWindow.webContents.send("decode", body);
         mainWindow.webContents.send("loading", false);
       });
+
+      // speech.speech.syncrecognize(
+      //  d
+      // }, function(err, response){
+      //   fs.unlink("out.wav")
+      //   console.log(response);
+      //   mainWindow.webContents.send("decode", response);
+      //   mainWindow.webContents.send("loading", false);
+      // });
       // decoder.startUtt();
       // decoder.processRaw(data, false, false);
       // decoder.endUtt();

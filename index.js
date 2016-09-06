@@ -88,25 +88,37 @@ const renderResponse = (event, response) => {
     if (response.entities.intent[0].value === "weather"){
       console.log("getting weather..");
       // get weather
-      // if (body.entities.location !== null){
+      let lat = '1.352083'
+      let lng = '103.819836'
+      if (body.entities.location !== null){
         // get weather in location
-      // } else {
+        https.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${body.entities.location}`, (res) => {
+          lat = JSON.parse(res).results[0].geometry.location.lat;
+          lng = JSON.parse(res).results[0].geometry.lcoation.lng;
+          getWeather(event, lat, lng); // wrap in request to avoid race conditions
+        });
+      } else {
         // get in singapore
-      let url = `https://api.forecast.io/forecast/${config.weather.key}/1.352083,103.819836?units=${config.weather.units}&exclude=minutely,hourly`
-      var request = https.get(url, function(res) {
-        var buffer = "", data, route;
-
-        res.on("data", function(chunk) {
-          buffer += chunk;
-        });
-
-        res.on("end", function(err) {
-          data = JSON.parse(buffer);
-          event.sender.send('weather-reply', data);
-        });
-      });
+        getWeather(event, lat, lng);
+      }
     }
   }
+}
+
+const getWeather = (event, lat, lng) => {
+  let url = `https://api.forecast.io/forecast/${config.weather.key}/${lat},${lng}?units=${config.weather.units}&exclude=minutely,hourly`
+  var request = https.get(url, (res) => {
+    var buffer = "", data, route;
+
+    res.on("data", (chunk) => {
+      buffer += chunk;
+    });
+
+    res.on("end", (err) => {
+      data = JSON.parse(buffer);
+      event.sender.send('weather-reply', data);
+    });
+  });
 }
 
 ipcMain.on("decode", (event, message) => {

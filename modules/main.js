@@ -28,9 +28,8 @@ function getAudioInput(){
           return console.error(err);
         }
         fs.unlink("out.wav")
-        console.log(body.results[0].alternatives[0].transcript);
-        // mainWindow.webContents.send("decode", body.results[0].alternatives[0].transcript);
-        // mainWindow.webContents.send("loading", false);
+        mainWindow.webContents.send("decode", body.results[0].alternatives[0].transcript);
+        mainWindow.webContents.send("loading", false);
       });
     });
   });
@@ -47,9 +46,8 @@ function hideLoading(){
 process.stdout.on('data', function (data){
   var str = data.toString().trim();
   if (str == "hotword"){
-    // getAudioInput();
+    getAudioInput();
     showLoading();
-    electron.ipcRenderer.send("decode", "what is the weather today");
   }
 });
 

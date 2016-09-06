@@ -28,8 +28,7 @@ function getAudioInput(){
           return console.error(err);
         }
         fs.unlink("out.wav")
-        mainWindow.webContents.send("decode", body.results[0].alternatives[0].transcript);
-        mainWindow.webContents.send("loading", false);
+        electron.ipcRenderer.send("decode", body.results[0].alternatives[0].transcript);
       });
     });
   });

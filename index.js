@@ -70,7 +70,6 @@ ipcMain.on("getAudioInput", (event) => {
         url: 'https://api.wit.ai/speech?v=20160902',
         body: data
       }, function(err, httpResponse, body){
-        console.log(httpResponse);
         if (err) {
           return console.error(err);
         }
@@ -90,12 +89,25 @@ const renderResponse = (event, response) => {
       // get weather
       let lat = '1.352083'
       let lng = '103.819836'
-      if (body.entities.location !== null){
+      if (response.entities.location !== null){
         // get weather in location
-        https.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${body.entities.location}`, (res) => {
-          lat = JSON.parse(res).results[0].geometry.location.lat;
-          lng = JSON.parse(res).results[0].geometry.lcoation.lng;
-          getWeather(event, lat, lng); // wrap in request to avoid race conditions
+        https.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${response.entities.location}`, (res) => {
+          var buffer = "";
+          res.on('data', (chunk) => {
+            buffer += chunk;
+          });
+
+          res.on("end", (err) => {
+            var d = JSON.parse(JSON.stringify(buffer));
+
+            // console.log(d);
+            // if (d.status != "ZERO_RESULTS"){
+            //   lat = d.results[0].geometry.location.lat;
+            //   lng = d.results[0].geometry.lcoation.lng;
+            // }
+
+            getWeather(event, lat, lng); // wrap in request to avoid race conditions
+          })
         });
       } else {
         // get in singapore
@@ -108,7 +120,7 @@ const renderResponse = (event, response) => {
 const getWeather = (event, lat, lng) => {
   let url = `https://api.forecast.io/forecast/${config.weather.key}/${lat},${lng}?units=${config.weather.units}&exclude=minutely,hourly`
   var request = https.get(url, (res) => {
-    var buffer = "", data, route;
+    var buffer = "", data;
 
     res.on("data", (chunk) => {
       buffer += chunk;

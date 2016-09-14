@@ -62,24 +62,24 @@ ipcMain.on("getAudioInput", (event) => {
   //     });
   //   });
   // });
-
+  getWeather(event, "Singapore");
   // straight to wit
-  exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', function(){
-    fs.readFile("out.wav", function(err, data) {
-      request.post({
-        headers: { 'Authorization': config.wit.key,
-                   'Content-Type': 'audio/wav'},
-        url: 'https://api.wit.ai/speech?v=20160902',
-        body: data
-      }, function(err, httpResponse, body){
-        if (err) {
-          return console.error(err);
-        }
-        fs.unlink("out.wav")
-        renderResponse(event, JSON.parse(body));
-      });
-    });
-  });
+  // exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', function(){
+  //   fs.readFile("out.wav", function(err, data) {
+  //     request.post({
+  //       headers: { 'Authorization': config.wit.key,
+  //                  'Content-Type': 'audio/wav'},
+  //       url: 'https://api.wit.ai/speech?v=20160902',
+  //       body: data
+  //     }, function(err, httpResponse, body){
+  //       if (err) {
+  //         return console.error(err);
+  //       }
+  //       fs.unlink("out.wav")
+  //       renderResponse(event, JSON.parse(body));
+  //     });
+  //   });
+  // });
 })
 
 const renderResponse = (event, response) => {

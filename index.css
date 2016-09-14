@@ -10,6 +10,9 @@ body {
   color: #fff;
 }
 
+table {
+  margin: 0px auto;
+}
 header {
 	position: absolute;
 	width: 500px;
@@ -46,12 +49,8 @@ header h1 {
 
 .bottom-center {
   position: absolute;
-  left: 50%;
-  top: 75%;
-  width: 500px;
-  height: 250px;
-  margin-left: -250px;
-  margin-top: -125px;
+  top: 50%;
+  width: 100%;
   text-align: center;
 }
 

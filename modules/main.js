@@ -30,6 +30,8 @@ electron.ipcRenderer.on('weather-reply', (event, arr) => {
   var data = arr[0];
   var len = data.hourly.data.length;
   var date = new Date();
+  var hoursToMidnight =  24 - date.getHours();
+  var skycons = new Skycons({"color": "white"});
 
   $(".main").html(
     `<h2>Today's Weather in ${arr[1].capitalizeFirstLetter()}..</h2>` +
@@ -37,15 +39,19 @@ electron.ipcRenderer.on('weather-reply', (event, arr) => {
     `<p> Temperatures up to ${data.hourly.data[0].temperature}°C.</p>`
   );
   var str = "<table><tr>";
-  for (var i = 0; i < len; i++){
+  for (var i = 0; i < hoursToMidnight; i++){
     var hour = date.getHours();
     str += `<td>${hour}:00</td>`;
-    date.setHours(date.getHours() + 1);
+    date.setHours(date.getHours() + 1); // getHours() to get new hour and increment by 1
   }
   str += "</tr><tr>";
-  for (var i = 0; i < len; i++){
-    str += `<td>${data.hourly.data[i].icon}</td>`;
+  for (var i = 0; i < hoursToMidnight; i++){
+    str += `<td><canvas id="icon${i}" width="64" height="64"></td>`;
   }
   str += `</tr></table>`;
   $(".main").append(str);
+  for (var i = 0; i < hoursToMidnight; i++){
+    skycons.add(`icon${i}`, data.hourly.data[i].icon);
+  }
+  skycons.play();
 });

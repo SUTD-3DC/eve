@@ -41,12 +41,8 @@ electron.ipcRenderer.on('weather-reply', (event, arr) => {
   var str = "<table><tr>";
   for (var i = 0; i < hoursToMidnight; i++){
     var hour = date.getHours();
-    str += `<td>${hour}:00</td>`;
-    date.setHours(date.getHours() + 1); // getHours() to get new hour and increment by 1
-  }
-  str += "</tr><tr>";
-  for (var i = 0; i < hoursToMidnight; i++){
-    str += `<td><canvas id="icon${i}" width="64" height="64"></td>`;
+    str += `<td><div>${hour}:00</div><canvas id="icon${i}" width="64" height="64"></td>`;
+    date.setHours(date.getHours() + 1);
   }
   str += `</tr></table>`;
   $(".main").append(str);

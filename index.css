@@ -12,7 +12,12 @@ body {
 
 table {
   margin: 0px auto;
+  max-width: 56%;
 }
+td {
+  display: inline-block;
+}
+
 header {
 	position: absolute;
 	width: 500px;

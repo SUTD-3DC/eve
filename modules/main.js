@@ -28,6 +28,24 @@ process.stdout.on('data', function (data){
 electron.ipcRenderer.on('weather-reply', (event, arr) => {
   hideLoading();
   var data = arr[0];
-  var d = data.daily;
-  $(".main").html("<h2>Today's Weather in " + arr[1].capitalizeFirstLetter() + "..</h2>" + "<p>" + data.currently.summary + " with temperatures up to " + data.currently.apparentTemperature + "°C." + "</p>");
+  var len = data.hourly.data.length;
+  var date = new Date();
+
+  $(".main").html(
+    `<h2>Today's Weather in ${arr[1].capitalizeFirstLetter()}..</h2>` +
+    `<p> ${data.hourly.summary}</p>` +
+    `<p> Temperatures up to ${data.hourly.data[0].temperature}°C.</p>`
+  );
+  var str = "<table><tr>";
+  for (var i = 0; i < len; i++){
+    var hour = date.getHours();
+    str += `<td>${hour}:00</td>`;
+    date.setHours(date.getHours() + 1);
+  }
+  str += "</tr><tr>";
+  for (var i = 0; i < len; i++){
+    str += `<td>${data.hourly.data[i].icon}</td>`;
+  }
+  str += `</tr></table>`;
+  $(".main").append(str);
 });

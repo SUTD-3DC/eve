@@ -113,7 +113,7 @@ const renderResponse = (event, response) => {
 }
 
 const getWeather = (event, location) => {
-  let url = `https://api.forecast.io/forecast/${config.weather.key}/${lat},${lng}?units=${config.weather.units}&exclude=minutely,hourly`
+  let url = `https://api.forecast.io/forecast/${config.weather.key}/${lat},${lng}?units=${config.weather.units}&exclude=currently,daily`
   var request = https.get(url, (res) => {
     var buffer = "", data;
 

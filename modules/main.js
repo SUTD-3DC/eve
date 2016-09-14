@@ -5,6 +5,10 @@ const fs = require('fs');
 var process = spawn('python',["speech/srs.py", "speech/resources/hotword.pmdl"]);
 var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Monday"];
 
+String.prototype.capitalizeFirstLetter = function() {
+  return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
 function showLoading(){
   $(".main").html("<h2 class='bottom-center'>Loading..</h2>");
 }
@@ -21,13 +25,9 @@ process.stdout.on('data', function (data){
   }
 });
 
-electron.ipcRenderer.on('weather-reply', (event, data) => {
+electron.ipcRenderer.on('weather-reply', (event, arr) => {
   hideLoading();
+  var data = arr[0];
   var d = data.daily;
-  $(".main").html("<h2>Today's Weather..</h2>" + "<p>" + data.currently.summary + " with temperatures up to " + data.currently.apparentTemperature + "°C." + "</p>");
-  $(".main").append("<table>");
-  for (i = 0; i < d.data.length; i++){
-    $(".main").append("<tr><td>" + days[i] + "</td><td>"+d.data[i].summary+"</td></tr>");
-  }
-  $(".main").append("</table>");
+  $(".main").html("<h2>Today's Weather in " + arr[1].capitalizeFirstLetter() + "..</h2>" + "<p>" + data.currently.summary + " with temperatures up to " + data.currently.apparentTemperature + "°C." + "</p>");
 });

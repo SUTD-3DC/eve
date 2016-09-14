@@ -14,6 +14,8 @@ require('electron-debug')();
 
 // prevent window being garbage collected
 let mainWindow;
+let lat = '1.352083';
+let lng = '103.819836';
 
 function onClosed() {
 	// dereference the window
@@ -74,7 +76,6 @@ ipcMain.on("getAudioInput", (event) => {
           return console.error(err);
         }
         fs.unlink("out.wav")
-        console.log(body);
         renderResponse(event, JSON.parse(body));
       });
     });
@@ -87,37 +88,31 @@ const renderResponse = (event, response) => {
     if (response.entities.intent[0].value === "weather"){
       console.log("getting weather..");
       // get weather
-      let lat = '1.352083'
-      let lng = '103.819836'
       if (response.entities.location !== null){
         // get weather in location
-        https.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${response.entities.location}`, (res) => {
-          var buffer = "";
-          res.on('data', (chunk) => {
+        https.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${response.entities.location[0].value}`, (res) => {
+          var buffer = "", data;
+
+          res.on("data", (chunk) => {
             buffer += chunk;
           });
 
           res.on("end", (err) => {
-            var d = JSON.parse(JSON.stringify(buffer));
-
-            // console.log(d);
-            // if (d.status != "ZERO_RESULTS"){
-            //   lat = d.results[0].geometry.location.lat;
-            //   lng = d.results[0].geometry.lcoation.lng;
-            // }
-
-            getWeather(event, lat, lng); // wrap in request to avoid race conditions
-          })
-        });
+            data = JSON.parse(buffer);
+            lat = data.results[0].geometry.location.lat;
+            lng = data.results[0].geometry.location.lng;
+            getWeather(event, response.entities.location[0].value);
+          });
+        })
       } else {
         // get in singapore
-        getWeather(event, lat, lng);
+        getWeather(event, "Singapore");
       }
     }
   }
 }
 
-const getWeather = (event, lat, lng) => {
+const getWeather = (event, location) => {
   let url = `https://api.forecast.io/forecast/${config.weather.key}/${lat},${lng}?units=${config.weather.units}&exclude=minutely,hourly`
   var request = https.get(url, (res) => {
     var buffer = "", data;
@@ -128,7 +123,7 @@ const getWeather = (event, lat, lng) => {
 
     res.on("end", (err) => {
       data = JSON.parse(buffer);
-      event.sender.send('weather-reply', data);
+      event.sender.send('weather-reply', [data, location]);
     });
   });
 }

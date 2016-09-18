@@ -19,11 +19,9 @@ Otherwise, downgrade electron-prebuilt to v1.2.8.
 
 
 # NLP and STT
-The project currently uses pocketsphinx.
+The project aims to use Google Speech with wit.ai but currently it uses wit.ai for full STT and NLP.
 
-Download a Language Model from:
-
-https://sourceforge.net/projects/cmusphinx/files/Acoustic%20and%20Language%20Models/US%20English/
-
-Compile it into a .bin with `sphinx_lm_convert -i name.lm -o name.lm.bin`
+# Features
+Clock.
+Displays the hourly weather until the end of day for a country.
 

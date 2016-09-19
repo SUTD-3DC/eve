@@ -31,11 +31,42 @@ electron.ipcRenderer.on('timetable-reply', (event, arr) => {
   // default to show timetable this week
   // reset timezone because API returns date without timezone
   var offset = new Date().getTimezoneOffset()*60*1000
-  var grouped_events = _.chain(arr).groupBy(arr, (e) => {
-    return new Date(Date.parse(e.start) + offset).split("T")[0]
-  });
-  console.log(grouped_events);
-  // for (var i = 0; i < (grouped_events.length < 5 ? grouped_events.length : 5); i++){
+  var grouped_events = _.chain(arr).groupBy((e) => {
+    return new Date(Date.parse(e.start) + offset).toISOString().split("T")[0]
+  }).value();
+
+  // convert the groups into arrays
+  var events = []
+  for (date in grouped_events){
+    events.push(grouped_events[date]);
+  }
+
+  var str = "";
+  var days_to_loop = (events.length < 5 ? events.length : 5)
+  var table = "<table class='timetable'>"
+  for (var i = 8; i < 20; i++){
+    var converted_time = i >= 10 ? i.toString() + "00" : "0" + i.toString() + "00"
+    var half_converted_time = i >= 10 ? i.toString() + "30" : "0" + i.toString() + "30"
+
+    table += `<tr><td rowspan='2'>${converted_time}</td>`
+    for (var j = 0; j < days_to_loop; j++){
+      table += `<td class='${converted_time}-${j}'></td>`
+    }
+    table += "</tr><tr><td></td>"
+    for (var j = 0; j < days_to_loop; j++){
+      table += `<td class='${half_converted_time}-${j}'></td>`
+    }
+    table += "</tr>"
+  }
+  table += "</table>"
+  $(
+
+  // for (var i = 0; i < days_to_loop; i++){
+  //   for (var j = 0; j < events[i].length; j++){
+  //     // console.log(events[i][j]);
+  //     str += `${events[i][j].title}<br/>`
+  //   }
+  //   str += "<br/>"
   // }
 })
 

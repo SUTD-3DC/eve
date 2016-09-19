@@ -3,6 +3,9 @@ var config = {
     key: '',
     units : "auto",
   },
+  wit: {
+    key: '',
+  },
   speech: {
     key: '',
   }

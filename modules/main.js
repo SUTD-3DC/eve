@@ -25,6 +25,10 @@ process.stdout.on('data', function (data){
   }
 });
 
+electron.ipcRenderer.on('timetable-reply', (event, arr) => {
+  // display timetable
+})
+
 electron.ipcRenderer.on('weather-reply', (event, arr) => {
   hideLoading();
   var data = arr[0];

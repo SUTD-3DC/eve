@@ -85,29 +85,37 @@ ipcMain.on("getAudioInput", (event) => {
 const renderResponse = (event, response) => {
   if (response.entities.intent !== null){
       // there is a valid response
-    if (response.entities.intent[0].value === "weather"){
-      console.log("getting weather..");
-      // get weather
-      if (response.entities.location !== null){
-        // get weather in location
-        https.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${response.entities.location[0].value}`, (res) => {
-          var buffer = "", data;
+    switch (response.entites.intent[0].value) {
+      case "weather":
+        if (response.entities.location !== null){
+          // get weather in location
+          https.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${response.entities.location[0].value}`, (res) => {
+            var buffer = "", data;
 
-          res.on("data", (chunk) => {
-            buffer += chunk;
-          });
+            res.on("data", (chunk) => {
+              buffer += chunk;
+            });
 
-          res.on("end", (err) => {
-            data = JSON.parse(buffer);
-            lat = data.results[0].geometry.location.lat;
-            lng = data.results[0].geometry.location.lng;
-            getWeather(event, response.entities.location[0].value);
+            res.on("end", (err) => {
+              data = JSON.parse(buffer);
+              lat = data.results[0].geometry.location.lat;
+              lng = data.results[0].geometry.location.lng;
+              getWeather(event, response.entities.location[0].value);
+            });
+          })
+        } else {
+          // get in singapore
+          getWeather(event, "Singapore");
+        }
+      case "timetable":
+        request.get(
+          {url: 'http://sutd-timetable.herokuapp.com/groups'},
+          (err, httpResponse, body) => {
+            var res = JSON.parse(body);
+            var sections = res[response.entities.search_query[0].value.toUpperCase()];
           });
-        })
-      } else {
-        // get in singapore
-        getWeather(event, "Singapore");
-      }
+      default:
+        console.log("no value responses.");
     }
   }
 }

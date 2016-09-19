@@ -62,7 +62,7 @@ ipcMain.on("getAudioInput", (event) => {
   //     });
   //   });
   // });
-  getWeather(event, "Singapore");
+
   // straight to wit
   // exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', function(){
   //   fs.readFile("out.wav", function(err, data) {
@@ -80,6 +80,7 @@ ipcMain.on("getAudioInput", (event) => {
   //     });
   //   });
   // });
+  getTimetable(event, "F01");
 })
 
 const renderResponse = (event, response) => {
@@ -108,16 +109,21 @@ const renderResponse = (event, response) => {
           getWeather(event, "Singapore");
         }
       case "timetable":
-        request.get(
-          {url: 'http://sutd-timetable.herokuapp.com/groups'},
-          (err, httpResponse, body) => {
-            var res = JSON.parse(body);
-            var sections = res[response.entities.search_query[0].value.toUpperCase()];
-          });
+        getTimetable(event, response.entities.search_query[0].value.toUpperCase());
       default:
         console.log("no value responses.");
     }
   }
+}
+
+const getTimetable = (event, group) => {
+  request.get(
+    {url: 'http://sutd-timetable.herokuapp.com/group_sections?' + group},
+    (err, httpResponse, body) => {
+      var res = JSON.parse(body);
+      event.sender.send('timetable-reply', res.events);
+    }
+  );
 }
 
 const getWeather = (event, location) => {

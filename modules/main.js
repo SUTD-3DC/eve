@@ -17,16 +17,26 @@ function hideLoading(){
   $(".main").html("");
 }
 
-process.stdout.on('data', function (data){
-  var str = data.toString().trim();
-  if (str == "hotword"){
-    electron.ipcRenderer.send('getAudioInput');
-    showLoading();
-  }
-});
+electron.ipcRenderer.send('getAudioInput');
+// process.stdout.on('data', function (data){
+//   var str = data.toString().trim();
+//   if (str == "hotword"){
+//     electron.ipcRenderer.send('getAudioInput');
+//     showLoading();
+//   }
+// });
 
 electron.ipcRenderer.on('timetable-reply', (event, arr) => {
-  // display timetable
+  hideLoading();
+  // default to show timetable this week
+  // reset timezone because API returns date without timezone
+  var offset = new Date().getTimezoneOffset()*60*1000
+  var grouped_events = _.chain(arr).groupBy(arr, (e) => {
+    return new Date(Date.parse(e.start) + offset).split("T")[0]
+  });
+  console.log(grouped_events);
+  // for (var i = 0; i < (grouped_events.length < 5 ? grouped_events.length : 5); i++){
+  // }
 })
 
 electron.ipcRenderer.on('weather-reply', (event, arr) => {

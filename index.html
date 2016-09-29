@@ -5,8 +5,10 @@
 		<title>Eve</title>
     <link rel="stylesheet" type="text/css" href="fonts/roboto.css">
 		<link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="node_modules/fullcalendar/dist/fullcalendar.css">
     <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/moment/moment.js"></script>
     <script>if (window.module) module = window.module;</script>
 	</head>
 	<body>
@@ -21,9 +23,12 @@
       </section>
 			<section class="bottom-center main">
       </section>
+      <div id='calendar'></div>
 			<footer></footer>
 		</div>
 	</body>
+  <script src="node_modules/fullcalendar/dist/fullcalendar.min.js"></script>
+  <script src="modules/underscore.min.js"></script>
   <script src="modules/skycons.js"></script>
   <script src="modules/clock.js"></script>
   <script src="modules/main.js"></script>

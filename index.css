@@ -10,11 +10,27 @@ body {
   color: #fff;
 }
 
-table {
+#calendar {
+  padding: 10em;
+}
+
+.fc-time {
+  color: #111;
+}
+
+.fc-content .fc-time {
+  color: #fff;
+}
+
+.fc-bg {
+  background-color: #fff;
+}
+
+table.weather-table {
   margin: 0px auto;
   max-width: 56%;
 }
-td {
+table.weather-table td {
   display: inline-block;
 }
 

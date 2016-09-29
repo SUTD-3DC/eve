@@ -28,6 +28,19 @@ electron.ipcRenderer.send('getAudioInput');
 
 electron.ipcRenderer.on('timetable-reply', (event, arr) => {
   hideLoading();
+  console.log(arr);
+  $('#calendar').fullCalendar({
+    defaultView: "agendaWeek",
+    minTime: "08:00:00",
+    maxTime: "19:00:00",
+    height: 650,
+    header: {
+      left: '',
+      center: '',
+      right: '',
+    },
+    events: arr
+  })
 })
 
 electron.ipcRenderer.on('weather-reply', (event, arr) => {
@@ -43,7 +56,7 @@ electron.ipcRenderer.on('weather-reply', (event, arr) => {
     `<p> ${data.hourly.summary}</p>` +
     `<p> Temperatures up to ${data.hourly.data[0].temperature}°C.</p>`
   );
-  var str = "<table><tr>";
+  var str = "<table class='weather-table'><tr>";
   for (var i = 0; i < hoursToMidnight; i++){
     var hour = date.getHours();
     str += `<td><div>${hour}:00</div><canvas id="icon${i}" width="64" height="64"></td>`;

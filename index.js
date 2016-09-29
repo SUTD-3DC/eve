@@ -64,55 +64,60 @@ ipcMain.on("getAudioInput", (event) => {
   // });
 
   // straight to wit
-  // exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', function(){
-  //   fs.readFile("out.wav", function(err, data) {
-  //     request.post({
-  //       headers: { 'Authorization': config.wit.key,
-  //                  'Content-Type': 'audio/wav'},
-  //       url: 'https://api.wit.ai/speech?v=20160902',
-  //       body: data
-  //     }, function(err, httpResponse, body){
-  //       if (err) {
-  //         return console.error(err);
-  //       }
-  //       fs.unlink("out.wav")
-  //       renderResponse(event, JSON.parse(body));
-  //     });
-  //   });
-  // });
-  getTimetable(event, "F01");
+  exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', function(){
+    fs.readFile("out.wav", function(err, data) {
+      request.post({
+        headers: { 'Authorization': 'Bearer ' + config.wit.key,
+                   'Content-Type': 'audio/wav'},
+        url: 'https://api.wit.ai/speech?v=20160902',
+        body: data
+      }, function(err, httpResponse, body){
+        if (err) {
+          return console.error(err);
+        }
+        fs.unlink("out.wav")
+        renderResponse(event, JSON.parse(body));
+      });
+    });
+  });
+  // getTimetable(event, "F02");
 })
 
 const renderResponse = (event, response) => {
-  if (response.entities.intent !== null){
-      // there is a valid response
-    switch (response.entites.intent[0].value) {
-      case "weather":
-        if (response.entities.location !== null){
-          // get weather in location
-          https.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${response.entities.location[0].value}`, (res) => {
-            var buffer = "", data;
+  console.log(response);
+  try {
+    if (response.entities.intent !== null){
+        // there is a valid response
+      switch (response.entites.intent[0].value) {
+        case "weather":
+          if (response.entities.location !== null){
+            // get weather in location
+            https.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${response.entities.location[0].value}`, (res) => {
+              var buffer = "", data;
 
-            res.on("data", (chunk) => {
-              buffer += chunk;
-            });
+              res.on("data", (chunk) => {
+                buffer += chunk;
+              });
 
-            res.on("end", (err) => {
-              data = JSON.parse(buffer);
-              lat = data.results[0].geometry.location.lat;
-              lng = data.results[0].geometry.location.lng;
-              getWeather(event, response.entities.location[0].value);
-            });
-          })
-        } else {
-          // get in singapore
-          getWeather(event, "Singapore");
-        }
-      case "timetable":
-        getTimetable(event, response.entities.search_query[0].value.toUpperCase());
-      default:
-        console.log("no value responses.");
+              res.on("end", (err) => {
+                data = JSON.parse(buffer);
+                lat = data.results[0].geometry.location.lat;
+                lng = data.results[0].geometry.location.lng;
+                getWeather(event, response.entities.location[0].value);
+              });
+            })
+          } else {
+            // get in singapore
+            getWeather(event, "Singapore");
+          }
+        case "timetable":
+          getTimetable(event, response.entities.search_query[0].value.toUpperCase());
+        default:
+          console.log("no value responses.");
+      }
     }
+  } catch(e){
+    console.log(response);
   }
 }
 

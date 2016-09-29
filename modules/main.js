@@ -17,14 +17,15 @@ function hideLoading(){
   $(".main").html("");
 }
 
-electron.ipcRenderer.send('getAudioInput');
-// process.stdout.on('data', function (data){
-//   var str = data.toString().trim();
-//   if (str == "hotword"){
-//     electron.ipcRenderer.send('getAudioInput');
-//     showLoading();
-//   }
-// });
+// electron.ipcRenderer.send('getAudioInput');
+
+process.stdout.on('data', function (data){
+  var str = data.toString().trim();
+  if (str == "hotword"){
+    electron.ipcRenderer.send('getAudioInput');
+    showLoading();
+  }
+});
 
 electron.ipcRenderer.on('timetable-reply', (event, arr) => {
   hideLoading();

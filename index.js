@@ -117,7 +117,6 @@ const renderResponse = (event, response) => {
       }
     }
   } catch(e){
-    console.log(response);
   }
 }
 

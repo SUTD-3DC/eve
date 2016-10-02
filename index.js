@@ -83,7 +83,7 @@ ipcMain.on("getAudioInput", (event) => {
   //     });
   //   });
   // });
-  getVideo(event, "risk astley never gonna give you up");
+  getVideo(event, "why taeyeon");
   // getTimetable(event, "F02");
 })
 
@@ -135,11 +135,12 @@ const getTimetable = (event, group) => {
 }
 
 const getVideo = (event, query) => {
-  google.youtube('v3').search.list({"q": query, "part": "snippet", "maxResults": 1, "key": config.google.key}, (err, val) =>{
-    if (val.items[0].id.kind == "youtube#video"){
-      event.sender.send('play-video', val.items[0].id.videoId);
-    };
-  });
+  event.sender.send('play-video', "Ri6wvGjuoOg");
+  // google.youtube('v3').search.list({"q": query, "part": "snippet", "maxResults": 1, "key": config.google.key}, (err, val) =>{
+  //   if (val.items[0].id.kind == "youtube#video"){
+  //     event.sender.send('play-video', val.items[0].id.videoId);
+  //   };
+  // });
 }
 
 const getWeather = (event, location) => {

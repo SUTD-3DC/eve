@@ -21,12 +21,38 @@
           <div class="date medium"></div>
         </div>
       </section>
-			<section class="bottom-center main player">
+      <div id="player"></div>
+			<section class="bottom-center main">
       </section>
       <div id='calendar'></div>
 			<footer></footer>
 		</div>
 	</body>
+  <script>
+    var youtubePlayer;
+    var playerReady = false;
+    // 2. This code loads the IFrame Player API code asynchronously.
+    var tag = document.createElement('script');
+
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    function onYouTubeIframeAPIReady() {
+      youtubePlayer = new YT.Player('player', {
+        height: $(window).height(),
+        width: $(window).width(),
+        events: {
+          "onReady": onPlayerReady,
+        }
+      });
+    }
+    function onPlayerReady(){
+      playerReady = true;
+    }
+
+    $("#player").hide();
+  </script>
+
   <script src="node_modules/fullcalendar/dist/fullcalendar.min.js"></script>
   <script src="modules/underscore.min.js"></script>
   <script src="modules/skycons.js"></script>

@@ -64,22 +64,23 @@ ipcMain.on("getAudioInput", (event) => {
   // });
 
   // straight to wit
-  exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', function(){
-    fs.readFile("out.wav", function(err, data) {
-      request.post({
-        headers: { 'Authorization': 'Bearer ' + config.wit.key,
-                   'Content-Type': 'audio/wav'},
-        url: 'https://api.wit.ai/speech?v=20160902',
-        body: data
-      }, function(err, httpResponse, body){
-        if (err) {
-          return console.error(err);
-        }
-        fs.unlink("out.wav")
-        renderResponse(event, JSON.parse(body));
-      });
-    });
-  });
+  // exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', function(){
+  //   fs.readFile("out.wav", function(err, data) {
+  //     request.post({
+  //       headers: { 'Authorization': 'Bearer ' + config.wit.key,
+  //                  'Content-Type': 'audio/wav'},
+  //       url: 'https://api.wit.ai/speech?v=20160902',
+  //       body: data
+  //     }, function(err, httpResponse, body){
+  //       if (err) {
+  //         return console.error(err);
+  //       }
+  //       fs.unlink("out.wav")
+  //       renderResponse(event, JSON.parse(body));
+  //     });
+  //   });
+  // });
+  getVideo(event, "risk astley never gonna give you up")
   // getTimetable(event, "F02");
 })
 
@@ -128,6 +129,10 @@ const getTimetable = (event, group) => {
       event.sender.send('timetable-reply', res.events);
     }
   );
+}
+
+const getVideo = (event, search) => {
+  event.sender.send('play-video', search)
 }
 
 const getWeather = (event, location) => {

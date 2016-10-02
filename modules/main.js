@@ -5,6 +5,12 @@ const fs = require('fs');
 var process = spawn('python',["speech/srs.py", "speech/resources/hotword.pmdl"]);
 var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Monday"];
 
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+var player;
+
 String.prototype.capitalizeFirstLetter = function() {
   return this.charAt(0).toUpperCase() + this.slice(1);
 }
@@ -16,10 +22,9 @@ function showLoading(){
 function hideLoading(){
   $(".main").html("");
 }
-
 // electron.ipcRenderer.send('getAudioInput');
 
-process.stdout.on('data', function (data){
+process.stdout.on('data', (data) => {
   var str = data.toString().trim();
   if (str == "hotword"){
     electron.ipcRenderer.send('getAudioInput');
@@ -44,6 +49,25 @@ electron.ipcRenderer.on('timetable-reply', (event, arr) => {
   })
 })
 
+electron.ipcRenderer.on('play-video', (e, id) => {
+
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      height: '390',
+      width: '640',
+      videoId: id,
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  }
+
+  function onPlayerReady(event) {
+    event.target.playVideo();
+  }
+
+}
 electron.ipcRenderer.on('weather-reply', (event, arr) => {
   hideLoading();
   var data = arr[0];

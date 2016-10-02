@@ -22,14 +22,15 @@ function showLoading(){
 function hideLoading(){
   $(".main").html("");
 }
-// electron.ipcRenderer.send('getAudioInput');
+
+electron.ipcRenderer.send('getAudioInput');
 
 process.stdout.on('data', (data) => {
   var str = data.toString().trim();
-  if (str == "hotword"){
-    electron.ipcRenderer.send('getAudioInput');
-    showLoading();
-  }
+  // if (str == "hotword"){
+  //   electron.ipcRenderer.send('getAudioInput');
+  //   showLoading();
+  // }
 });
 
 electron.ipcRenderer.on('timetable-reply', (event, arr) => {
@@ -51,7 +52,7 @@ electron.ipcRenderer.on('timetable-reply', (event, arr) => {
 
 electron.ipcRenderer.on('play-video', (e, id) => {
 
-  function onYouTubeIframeAPIReady() {
+  const onYouTubeIframeAPIReady = () => {
     player = new YT.Player('player', {
       height: '390',
       width: '640',
@@ -63,11 +64,11 @@ electron.ipcRenderer.on('play-video', (e, id) => {
     });
   }
 
-  function onPlayerReady(event) {
+  const onPlayerReady = (event) => {
     event.target.playVideo();
   }
+});
 
-}
 electron.ipcRenderer.on('weather-reply', (event, arr) => {
   hideLoading();
   var data = arr[0];

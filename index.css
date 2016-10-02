@@ -10,6 +10,10 @@ body {
   color: #fff;
 }
 
+.darkened {
+  color: #555;
+}
+
 #calendar {
   padding: 10em;
 }

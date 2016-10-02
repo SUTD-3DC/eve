@@ -46,14 +46,13 @@ ipcMain.on("getAudioInput", (event) => {
       google.speech('v1beta1').syncrecognize({
         "resource": data.toString('base64'),
         "key": config.google.key },
-        "config": {
-          "encoding": "LINEAR16",
+        { "encoding": "LINEAR16",
           "sample_rate": 16000
-        }, function(err, response){
+        }, (err, response) => {
           if (err) {
             console.error(err)
           }
-          fs.unlink("out.wav");
+          // fs.unlink("out.wav");
           ipcMain.send("decode", response.results[0].alternatives[0].transcript);
         });
   //     request.post({

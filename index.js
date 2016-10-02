@@ -41,8 +41,21 @@ function createMainWindow() {
 ipcMain.on("getAudioInput", (event) => {
 
   // google speech relay
-  // exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', function(){
-  //   fs.readFile("out.wav", function(err, data) {
+  exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
+    fs.readFile("out.wav", (err, data) => {
+      google.speech('v1beta1').syncrecognize({
+        "resource": data.toString('base64'),
+        "key": config.google.key },
+        "config": {
+          "encoding": "LINEAR16",
+          "sample_rate": 16000
+        }, function(err, response){
+          if (err) {
+            console.error(err)
+          }
+          fs.unlink("out.wav");
+          ipcMain.send("decode", response.results[0].alternatives[0].transcript);
+        });
   //     request.post({
   //       headers: { 'Content-Type': 'application/json', 'Authorization': config.speech.key},
   //       url: 'https://speech.googleapis.com/v1beta1/speech:syncrecognize',
@@ -63,26 +76,26 @@ ipcMain.on("getAudioInput", (event) => {
   //       fs.unlink("out.wav")
   //       ipcMain.send("decode", body.results[0].alternatives[0].transcript);
   //     });
-  //   });
-  // });
-
-  // straight to wit
-  exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', function(){
-    fs.readFile("out.wav", function(err, data) {
-      request.post({
-        headers: { 'Authorization': 'Bearer ' + config.wit.key,
-                   'Content-Type': 'audio/wav'},
-        url: 'https://api.wit.ai/speech?v=20160902',
-        body: data
-      }, function(err, httpResponse, body){
-        if (err) {
-          return console.error(err);
-        }
-        fs.unlink("out.wav")
-        renderResponse(event, JSON.parse(body));
-      });
     });
   });
+
+  // straight to wit
+  // exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', function(){
+  //   fs.readFile("out.wav", function(err, data) {
+  //     request.post({
+  //       headers: { 'Authorization': 'Bearer ' + config.wit.key,
+  //                  'Content-Type': 'audio/wav'},
+  //       url: 'https://api.wit.ai/speech?v=20160902',
+  //       body: data
+  //     }, function(err, httpResponse, body){
+  //       if (err) {
+  //         return console.error(err);
+  //       }
+  //       fs.unlink("out.wav")
+  //       renderResponse(event, JSON.parse(body));
+  //     });
+  //   });
+  // });
   // getVideo(event, "why taeyeon");
   // getTimetable(event, "F02");
 })

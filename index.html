@@ -43,11 +43,25 @@
         width: $(window).width(),
         events: {
           "onReady": onPlayerReady,
+          "onStateChange": onPlayerStateChange
         }
       });
     }
     function onPlayerReady(){
       playerReady = true;
+    }
+
+    var done = false;
+    function onPlayerStateChange(event) {
+      if (event.data == YT.PlayerState.PLAYING && !done) {
+        setTimeout(stopVideo, 6000);
+        done = true;
+      } else if (event.data == YT.PlayerState.ENDED){
+        $("#player").hide();
+      }
+    }
+    function stopVideo() {
+      player.stopVideo();
     }
 
     $("#player").hide();

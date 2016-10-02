@@ -19,7 +19,7 @@ function hideLoading(){
 
 // electron.ipcRenderer.send('getAudioInput');
 
-process.stdout.on('data', function (data){
+process.stdout.on('data', (data) => {
   var str = data.toString().trim();
   if (str == "hotword"){
     electron.ipcRenderer.send('getAudioInput');
@@ -43,6 +43,21 @@ electron.ipcRenderer.on('timetable-reply', (event, arr) => {
     events: arr
   })
 })
+
+// this is shitty way of doing, should use something like React here!
+electron.ipcRenderer.on('play-video', (e, id) => {
+  $("#player").show();
+  const loadVideo = () => {
+    if (youtubePlayer && playerReady){
+        youtubePlayer.loadVideoById(id);
+      } else {
+        setTimeout(() => {
+          loadVideo();
+        }, 30);
+      }
+  }
+  loadVideo();
+});
 
 electron.ipcRenderer.on('weather-reply', (event, arr) => {
   hideLoading();

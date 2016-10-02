@@ -67,23 +67,23 @@ ipcMain.on("getAudioInput", (event) => {
   // });
 
   // straight to wit
-  // exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', function(){
-  //   fs.readFile("out.wav", function(err, data) {
-  //     request.post({
-  //       headers: { 'Authorization': 'Bearer ' + config.wit.key,
-  //                  'Content-Type': 'audio/wav'},
-  //       url: 'https://api.wit.ai/speech?v=20160902',
-  //       body: data
-  //     }, function(err, httpResponse, body){
-  //       if (err) {
-  //         return console.error(err);
-  //       }
-  //       fs.unlink("out.wav")
-  //       renderResponse(event, JSON.parse(body));
-  //     });
-  //   });
-  // });
-  getVideo(event, "why taeyeon");
+  exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', function(){
+    fs.readFile("out.wav", function(err, data) {
+      request.post({
+        headers: { 'Authorization': 'Bearer ' + config.wit.key,
+                   'Content-Type': 'audio/wav'},
+        url: 'https://api.wit.ai/speech?v=20160902',
+        body: data
+      }, function(err, httpResponse, body){
+        if (err) {
+          return console.error(err);
+        }
+        fs.unlink("out.wav")
+        renderResponse(event, JSON.parse(body));
+      });
+    });
+  });
+  // getVideo(event, "why taeyeon");
   // getTimetable(event, "F02");
 })
 
@@ -135,12 +135,12 @@ const getTimetable = (event, group) => {
 }
 
 const getVideo = (event, query) => {
-  event.sender.send('play-video', "Ri6wvGjuoOg");
-  // google.youtube('v3').search.list({"q": query, "part": "snippet", "maxResults": 1, "key": config.google.key}, (err, val) =>{
-  //   if (val.items[0].id.kind == "youtube#video"){
-  //     event.sender.send('play-video', val.items[0].id.videoId);
-  //   };
-  // });
+  // event.sender.send('play-video', "Ri6wvGjuoOg");
+  google.youtube('v3').search.list({"q": query, "part": "snippet", "maxResults": 1, "key": config.google.key}, (err, val) =>{
+    if (val.items[0].id.kind == "youtube#video"){
+      event.sender.send('play-video', val.items[0].id.videoId);
+    };
+  });
 }
 
 const getWeather = (event, location) => {

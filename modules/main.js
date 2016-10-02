@@ -17,14 +17,14 @@ function hideLoading(){
   $(".main").html("");
 }
 
-electron.ipcRenderer.send('getAudioInput');
+// electron.ipcRenderer.send('getAudioInput');
 
 process.stdout.on('data', (data) => {
   var str = data.toString().trim();
-  // if (str == "hotword"){
-  //   electron.ipcRenderer.send('getAudioInput');
-  //   showLoading();
-  // }
+  if (str == "hotword"){
+    electron.ipcRenderer.send('getAudioInput');
+    showLoading();
+  }
 });
 
 electron.ipcRenderer.on('timetable-reply', (event, arr) => {

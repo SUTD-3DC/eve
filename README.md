@@ -14,7 +14,6 @@ https://cloud.google.com/speech/docs/common/auth
 ```
 export GOOGLE_APPLICATION_CREDENTIALS=`set your location of keyfile.json here`
 npm install && npm start
-
 ```
 
 Follow the instructions here to install dependencies for the hotword detection.
@@ -31,9 +30,6 @@ Test that the hotword detection is working by:
 python speech/srs.py speech/resources/hotword.pmdl
 ```
 
-
-```
-
 Set these if rec is not working (typically on the Pi)
 
 ```
@@ -48,9 +44,10 @@ Otherwise, downgrade electron-prebuilt to v1.2.8.
 
 
 # NLP and STT
-The project aims to use Google Speech with wit.ai but currently it uses wit.ai for full STT and NLP.
+The project aims to use Google Speech with wit.ai for STT and NLP.
 
 # Features
-Clock.
-Displays the hourly weather until the end of day for a country.
+Clock - Displays the hourly weather until the end of day for a country.
+Video - Plays a Youtube Video
+Weather - Shows the current weather
 

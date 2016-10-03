@@ -14,11 +14,11 @@ const google = require('googleapis');
 var authClient;
 
 google.auth.getApplicationDefault( (err, ac) => {
+  if (err) {
+    console.log(err);
+  }
   if (ac.createScopedRequired && ac.createScopedRequired()) {
     authClient = ac.createScoped(['https://www.googleapis.com/auth/cloud-platform']);
-  }
-  if (err) {
-    return cb(err);
   }
 });
 

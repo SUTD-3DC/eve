@@ -48,6 +48,8 @@ The project aims to use Google Speech with wit.ai for STT and NLP.
 
 # Features
 Clock - Displays the hourly weather until the end of day for a country.
+
 Video - Plays a Youtube Video
+
 Weather - Shows the current weather
 

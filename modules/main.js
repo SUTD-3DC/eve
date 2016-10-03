@@ -24,6 +24,7 @@ process.stdout.on('data', (data) => {
   if (str == "hotword"){
     electron.ipcRenderer.send('getAudioInput');
     showLoading();
+    process.exit(0);
   }
 });
 
@@ -46,6 +47,7 @@ electron.ipcRenderer.on('timetable-reply', (event, arr) => {
 
 // this is shitty way of doing, should use something like React here!
 electron.ipcRenderer.on('play-video', (e, id) => {
+  hideLoading();
   $("#player").show();
   const loadVideo = () => {
     if (youtubePlayer && playerReady){

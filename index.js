@@ -51,6 +51,7 @@ function createMainWindow() {
 ipcMain.on("getAudioInput", (event) => {
 
   // google speech relay
+  // decode(event, "what's the timetable for f01?");
   exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
     fs.readFile("out.wav", (err, data) => {
       google.speech('v1beta1').speech.syncrecognize({
@@ -111,16 +112,14 @@ ipcMain.on("getAudioInput", (event) => {
   //     });
   //   });
   // });
-  // getVideo(event, "why taeyeon");
-  // getTimetable(event, "F02");
 })
 
 const renderResponse = (event, response) => {
-  console.log(response);
   try {
     if (response.entities.intent !== null){
-        // there is a valid response
-      switch (response.entites.intent[0].value) {
+      // there is a valid response
+      console.log(response.entities);
+      switch (response.entities.intent[0].value) {
         case "weather":
           if (response.entities.location !== null){
             // get weather in location
@@ -142,15 +141,21 @@ const renderResponse = (event, response) => {
             // get in singapore
             getWeather(event, "Singapore");
           }
+          break
         case "timetable":
-          getTimetable(event, response.entities.search_query[0].value.toUpperCase());
+          var q = response.entities.local_search_query ? response.entities.local_search_query[0].value : response.entities.search_query[0].value
+          getTimetable(event, q.toUpperCase());
+          break
         case "video":
-          getVideo(event, response.entities.search_query[0].value);
+          var q = response.entities.local_search_query ? response.entities.local_search_query[0].value : response.entities.search_query[0].value
+          getVideo(event, q);
+          break
         default:
           console.log("no value responses.");
       }
     }
   } catch(e){
+    console.log(e);
   }
 }
 

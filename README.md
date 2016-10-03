@@ -5,9 +5,8 @@ Electron app testbed!
 # Getting started
 
 ```
-
-npm install -g cmake-js
 cp config.example.js config.js
+export GOOGLE_APPLICATION_CREDENTIALS=`set your location of keyfile.json here`
 npm install && npm start
 
 ```

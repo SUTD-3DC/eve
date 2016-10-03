@@ -11,6 +11,17 @@ const ipcMain = electron.ipcMain;
 
 const google = require('googleapis');
 
+var authClient;
+
+google.auth.getApplicationDefault( (err, ac) => {
+  if (ac.createScopedRequired && ac.createScopedRequired()) {
+    authClient = ac.createScoped(['https://www.googleapis.com/auth/cloud-platform']);
+  }
+  if (err) {
+    return cb(err);
+  }
+});
+
 // adds debug features like hotkeys for triggering dev tools and reload
 require('electron-debug')();
 
@@ -45,6 +56,7 @@ ipcMain.on("getAudioInput", (event) => {
     fs.readFile("out.wav", (err, data) => {
       google.speech('v1beta1').syncrecognize({
         "resource": data.toString('base64'),
+        "auth": authClient,
         "key": config.google.key },
         { "encoding": "LINEAR16",
           "sample_rate": 16000

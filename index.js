@@ -51,8 +51,8 @@ function createMainWindow() {
 ipcMain.on("getAudioInput", (event) => {
 
   // google speech relay
-  // exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
-    fs.readFile("out.sample.wav", (err, data) => {
+  exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
+    fs.readFile("out.wav", (err, data) => {
       google.speech('v1beta1').speech.syncrecognize({
         "auth": authClient,
         "resource": {
@@ -67,7 +67,7 @@ ipcMain.on("getAudioInput", (event) => {
           if (err) {
             console.error(err)
           }
-          // fs.unlink("out.wav");
+          fs.unlink("out.wav");
           console.log(response.results[0].alternatives[0].transcript);
           decode(event, response.results[0].alternatives[0].transcript);
         });
@@ -91,7 +91,7 @@ ipcMain.on("getAudioInput", (event) => {
   //       fs.unlink("out.wav")
   //       ipcMain.send("decode", body.results[0].alternatives[0].transcript);
   //     });
-   //  });
+    });
   });
 
   // straight to wit

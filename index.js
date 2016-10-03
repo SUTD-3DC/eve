@@ -16,8 +16,7 @@ var authClient;
 google.auth.getApplicationDefault( (err, ac) => {
   if (err) {
     console.log(err);
-  }
-  if (ac.createScopedRequired && ac.createScopedRequired()) {
+  } else if (ac.createScopedRequired && ac.createScopedRequired()) {
     authClient = ac.createScoped(['https://www.googleapis.com/auth/cloud-platform']);
   }
 });
@@ -52,19 +51,23 @@ function createMainWindow() {
 ipcMain.on("getAudioInput", (event) => {
 
   // google speech relay
-  exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
-    fs.readFile("out.wav", (err, data) => {
-      google.speech('v1beta1').syncrecognize({
-        "resource": data.toString('base64'),
-        "auth": authClient,
-        "key": config.google.key },
-        { "encoding": "LINEAR16",
+  // exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
+    fs.readFile("out.sample.wav", (err, data) => {
+      google.speech('v1beta1').speech.syncrecognize({
+        "config": {
+          "auth": authClient,
+          "key": config.google.key,
+          "encoding": "LINEAR16",
           "sample_rate": 16000
-        }, (err, response) => {
+        },
+        "audio": {
+          "content": data.toString("base64"),
+        }}, (err, response) => {
           if (err) {
             console.error(err)
           }
           // fs.unlink("out.wav");
+          console.log(response.results);
           ipcMain.send("decode", response.results[0].alternatives[0].transcript);
         });
   //     request.post({
@@ -87,7 +90,7 @@ ipcMain.on("getAudioInput", (event) => {
   //       fs.unlink("out.wav")
   //       ipcMain.send("decode", body.results[0].alternatives[0].transcript);
   //     });
-    });
+   //  });
   });
 
   // straight to wit

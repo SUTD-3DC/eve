@@ -6,6 +6,12 @@ Electron app testbed!
 
 ```
 cp config.example.js config.js
+```
+
+Create your keyfile.json with a service account.
+https://cloud.google.com/speech/docs/common/auth
+
+```
 export GOOGLE_APPLICATION_CREDENTIALS=`set your location of keyfile.json here`
 npm install && npm start
 

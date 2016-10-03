@@ -55,7 +55,6 @@ ipcMain.on("getAudioInput", (event) => {
     fs.readFile("out.sample.wav", (err, data) => {
       google.speech('v1beta1').speech.syncrecognize({
         "auth": authClient,
-        // "key": config.google.key,
         "resource": {
           "config": {
             "encoding": "LINEAR16",

@@ -5,4 +5,6 @@ node_modules
 config.js
 out.wav
 speech/resources/*.bin
+speech/snowboydetect.py
+speech/_snowboydetect.so
 keyfile.json

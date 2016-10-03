@@ -21,6 +21,19 @@ Follow the instructions here to install dependencies for the hotword detection.
 
 https://github.com/Kitt-AI/snowboy
 
+Generate _snowboydetect.so and snowboydetect.py with SWIG (check SWIG version!)
+
+Copy the files into the speech folder.
+
+Test that the hotword detection is working by:
+
+```
+python speech/srs.py speech/resources/hotword.pmdl
+```
+
+
+```
+
 Set these if rec is not working (typically on the Pi)
 
 ```

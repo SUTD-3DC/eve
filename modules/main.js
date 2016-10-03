@@ -17,16 +17,20 @@ function hideLoading(){
   $(".main").html("");
 }
 
-// electron.ipcRenderer.send('getAudioInput');
+function waitForHotWord(p){
+  p.stdout.on('data', (data) => {
+    var str = data.toString().trim();
+    if (str == "hotword"){
+      electron.ipcRenderer.send('getAudioInput');
+      showLoading();
+      p.exit(0);
+    }
+  });
+}
 
-process.stdout.on('data', (data) => {
-  var str = data.toString().trim();
-  if (str == "hotword"){
-    electron.ipcRenderer.send('getAudioInput');
-    showLoading();
-    process.exit(0);
-  }
-});
+
+// electron.ipcRenderer.send('getAudioInput');
+waitForHotWord(process);
 
 electron.ipcRenderer.on('timetable-reply', (event, arr) => {
   hideLoading();
@@ -43,6 +47,7 @@ electron.ipcRenderer.on('timetable-reply', (event, arr) => {
     },
     events: arr
   })
+  waitForHotWord(spawn('python',["speech/srs.py", "speech/resources/hotword.pmdl"]));
 })
 
 // this is shitty way of doing, should use something like React here!
@@ -86,4 +91,5 @@ electron.ipcRenderer.on('weather-reply', (event, arr) => {
     skycons.add(`icon${i}`, data.hourly.data[i].icon);
   }
   skycons.play();
+  waitForHotWord(spawn('python',["speech/srs.py", "speech/resources/hotword.pmdl"]));
 });

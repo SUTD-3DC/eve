@@ -17,6 +17,13 @@ npm install && npm start
 
 ```
 
+Set these if rec is not working (typically on the Pi)
+
+```
+export AUDIODEV=hw:1,0
+export AUDIODRIVER=alsa
+```
+
 If you are having problems with mismatching modules, ensure that the node version is the same as:
 https://github.com/electron/electron/blob/master/.node-version
 

@@ -16,7 +16,7 @@ function hideLoading(){
 }
 
 const record = require('node-record-lpcm16');
-const { Models, Detector }= require("snowboy");
+const { Models, Detector } = require("snowboy");
 const models = new Models();
 models.add({
   file: 'resources/hotword.pmdl',

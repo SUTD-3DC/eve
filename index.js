@@ -54,21 +54,23 @@ ipcMain.on("getAudioInput", (event) => {
   // exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
     fs.readFile("out.sample.wav", (err, data) => {
       google.speech('v1beta1').speech.syncrecognize({
-        "config": {
-          "auth": authClient,
-          "key": config.google.key,
-          "encoding": "LINEAR16",
-          "sample_rate": 16000
-        },
-        "audio": {
-          "content": data.toString("base64"),
+        "auth": authClient,
+        // "key": config.google.key,
+        "resource": {
+          "config": {
+            "encoding": "LINEAR16",
+            "sampleRate": 16000
+          },
+          "audio": {
+            "content": data.toString("base64"),
+          }
         }}, (err, response) => {
           if (err) {
             console.error(err)
           }
           // fs.unlink("out.wav");
-          console.log(response.results);
-          ipcMain.send("decode", response.results[0].alternatives[0].transcript);
+          console.log(response.results[0].alternatives[0].transcript);
+          decode(event, response.results[0].alternatives[0].transcript);
         });
   //     request.post({
   //       headers: { 'Content-Type': 'application/json', 'Authorization': config.speech.key},
@@ -186,9 +188,9 @@ const getWeather = (event, location) => {
   });
 }
 
-ipcMain.on("decode", (event, message) => {
+const decode = (event, message) => {
   request.get(
-    { headers: { "Authorization": config.wit.key },
+    { headers: { "Authorization": "Bearer " + config.wit.key },
     url: 'https://api.wit.ai/message?v=20160902&q='+message
   },
   (err, httpResponse, body) => {
@@ -198,7 +200,7 @@ ipcMain.on("decode", (event, message) => {
     }
     renderResponse(event, response);
   });
-});
+};
 
 
 app.on('window-all-closed', () => {

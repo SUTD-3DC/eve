@@ -59,7 +59,10 @@ ipcMain.on("getAudioInput", (event) => {
         "resource": {
           "config": {
             "encoding": "LINEAR16",
-            "sampleRate": 16000
+            "sampleRate": 16000,
+            "speechContext": {
+              "phrases": [ "f01", "f02", "f03", "f04", "f05", "f06", "f07", "f08", "f09"]
+            }
           },
           "audio": {
             "content": data.toString("base64"),
@@ -114,7 +117,7 @@ ipcMain.on("getAudioInput", (event) => {
   // });
 })
 
-const renderResponse = (event, response) => {
+const renderResponse = (event, response, message) => {
   try {
     if (response.entities.intent !== null){
       // there is a valid response
@@ -155,7 +158,7 @@ const renderResponse = (event, response) => {
       }
     }
   } catch(e){
-    console.log(e);
+    event.sender.send('undefined-method', message)
   }
 }
 
@@ -204,7 +207,7 @@ const decode = (event, message) => {
     if (err) {
       return console.error(err);
     }
-    renderResponse(event, response);
+    renderResponse(event, response, message);
   });
 };
 

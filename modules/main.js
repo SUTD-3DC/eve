@@ -23,7 +23,7 @@ function waitForHotWord(p){
     if (str == "hotword"){
       electron.ipcRenderer.send('getAudioInput');
       showLoading();
-      p.exit(0);
+      p.kill('SIGKILL');
     }
   });
 }
@@ -65,6 +65,13 @@ electron.ipcRenderer.on('play-video', (e, id) => {
   }
   loadVideo();
 });
+
+electron.ipcRenderer.on('undefined-method', (event, str) => {
+  $(".main").html(
+    `<h1>Sorry I couldn't understand what you said!</h1>`+
+    `<h2>I heard: ${str}</h2>`
+  );
+})
 
 electron.ipcRenderer.on('weather-reply', (event, arr) => {
   hideLoading();

@@ -1,8 +1,9 @@
 const electron = require('electron');
-const spawn = require("child_process").spawn; // spawns a python process
 const fs = require('fs');
+const record = require('node-record-lpcm16');
+const {Detector, Models} = require('snowboy');
+const models = new Models();
 
-var process = spawn('python',["speech/srs.py", "speech/resources/hotword.pmdl"]);
 var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Monday"];
 
 String.prototype.capitalizeFirstLetter = function() {
@@ -17,20 +18,53 @@ function hideLoading(){
   $(".main").html("");
 }
 
-function waitForHotWord(p){
-  p.stdout.on('data', (data) => {
-    var str = data.toString().trim();
-    if (str == "hotword"){
-      electron.ipcRenderer.send('getAudioInput');
-      showLoading();
-      p.kill('SIGKILL');
-    }
-  });
-}
+
+models.add({
+  file: 'resources/hotword.pmdl',
+  sensitivity: '0.5',
+  hotwords : 'hey-eve'
+});
+
+const detector = new Detector({
+  resource: "resources/common.res",
+  models: models,
+  audioGain: 2.0
+});
+
+detector.on('silence', function () {
+  console.log('silence');
+});
+
+detector.on('sound', function () {
+  console.log('sound');
+});
+
+detector.on('error', function () {
+  console.log('error');
+});
+
+detector.on('hotword', function (index, hotword) {
+  console.log('hotword', index, hotword);
+});
+
+const mic = record.start({
+  threshold: 0,
+  verbose: true
+});
+
+mic.pipe(detector);
 
 
-// electron.ipcRenderer.send('getAudioInput');
-waitForHotWord(process);
+// function waitForHotWord(p){
+//   p.stdout.on('data', (data) => {
+//     var str = data.toString().trim();
+//     if (str == "hotword"){
+//       electron.ipcRenderer.send('getAudioInput');
+//       showLoading();
+//       p.kill('SIGKILL');
+//     }
+//   });
+// }
 
 electron.ipcRenderer.on('timetable-reply', (event, arr) => {
   hideLoading();

@@ -17,6 +17,10 @@ npm install && npm start
 
 ```
 
+Follow the instructions here to install dependencies for the hotword detection.
+
+https://github.com/Kitt-AI/snowboy
+
 Set these if rec is not working (typically on the Pi)
 
 ```

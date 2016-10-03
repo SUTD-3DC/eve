@@ -144,6 +144,8 @@ const renderResponse = (event, response) => {
           }
         case "timetable":
           getTimetable(event, response.entities.search_query[0].value.toUpperCase());
+        case "video":
+          getVideo(event, response.entities.search_query[0].value);
         default:
           console.log("no value responses.");
       }

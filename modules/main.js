@@ -1,8 +1,5 @@
 const electron = require('electron');
 const fs = require('fs');
-const record = require('node-record-lpcm16');
-const {Detector, Models} = require('snowboy');
-const models = new Models();
 
 var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Monday"];
 
@@ -18,7 +15,9 @@ function hideLoading(){
   $(".main").html("");
 }
 
-
+const record = require('node-record-lpcm16');
+const { Models, Detector }= require("snowboy");
+const models = new Models();
 models.add({
   file: 'resources/hotword.pmdl',
   sensitivity: '0.5',
@@ -45,6 +44,7 @@ detector.on('error', function () {
 
 detector.on('hotword', function (index, hotword) {
   console.log('hotword', index, hotword);
+  ipcMain.send("getAudioInput");
 });
 
 const mic = record.start({
@@ -53,18 +53,6 @@ const mic = record.start({
 });
 
 mic.pipe(detector);
-
-
-// function waitForHotWord(p){
-//   p.stdout.on('data', (data) => {
-//     var str = data.toString().trim();
-//     if (str == "hotword"){
-//       electron.ipcRenderer.send('getAudioInput');
-//       showLoading();
-//       p.kill('SIGKILL');
-//     }
-//   });
-// }
 
 electron.ipcRenderer.on('timetable-reply', (event, arr) => {
   hideLoading();

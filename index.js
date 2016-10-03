@@ -196,7 +196,6 @@ const getWeather = (event, location) => {
     });
   });
 }
-
 const decode = (event, message) => {
   request.get(
     { headers: { "Authorization": "Bearer " + config.wit.key },

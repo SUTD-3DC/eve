@@ -126,6 +126,7 @@ const renderResponse = (event, response, message) => {
       }
     }
   } catch(e){
+    console.log(e);
     event.sender.send('undefined-method', message)
   }
 }

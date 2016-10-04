@@ -9,6 +9,7 @@ const exec = require('child_process').exec;
 const app = electron.app;
 
 const google = require('googleapis');
+const record = require('node-record-lpcm16');
 
 var authClient;
 
@@ -48,37 +49,43 @@ function createMainWindow() {
 }
 
 electron.ipcMain.on("getAudioInput", (event) => {
-  exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
-    fs.readFile(inputFile, (err, audioFile) => {
-      if (err) {
-        return console.log(err);
-      }
-      var audioString = new Buffer(audioString).toString('base64');
-      google.speech('v1beta1').speech.syncrecognize({
-        "auth": authClient,
-        "resource": {
-          "config": {
-            "encoding": "LINEAR16",
-            "sampleRate": 16000,
-            "speechContext": {
-              "phrases": [ "f01", "f02", "f03", "f04", "f05", "f06", "f07", "f08", "f09"]
-            }
-          },
-          "audio": {
-            "content": audioString,
-          }
-        }}, (err, response) => {
-          if (err) {
-            console.error(err)
-          }
-        fs.unlink("out.wav");
-        console.log(response.results[0].alternatives[0].transcript);
-        decode(event, response.results[0].alternatives[0].transcript);
-      });
-    });
-  });
+  var file = fs.createWriteStream('out.wav', { encoding: 'binary' });
+  record.start()
+  setTimeout(() => {
+    record.stop().pipe(file);
+    readAndParseAudioFile(file);
+  }, 3000);
 });
 
+const readAndParseAudioFile = (inputFile) => {
+  fs.readFile(inputFile, (err, audioFile) => {
+    if (err) {
+      return console.log(err);
+    }
+    var audioString = new Buffer(audioString).toString('base64');
+    google.speech('v1beta1').speech.syncrecognize({
+      "auth": authClient,
+      "resource": {
+        "config": {
+          "encoding": "LINEAR16",
+          "sampleRate": 16000,
+          "speechContext": {
+            "phrases": [ "f01", "f02", "f03", "f04", "f05", "f06", "f07", "f08", "f09"]
+          }
+        },
+        "audio": {
+          "content": audioString,
+        }
+      }}, (err, response) => {
+        if (err) {
+          console.error(err)
+        }
+      fs.unlink("out.wav");
+      console.log(response.results[0].alternatives[0].transcript);
+      decode(event, response.results[0].alternatives[0].transcript);
+    });
+  });
+}
 const renderResponse = (event, response, message) => {
   try {
     if (response.entities.intent !== null){

@@ -79,7 +79,7 @@ electron.ipcMain.on("getAudioInput", (event) => {
       });
     });
   });
-  },3000)
+  },1000)
 });
 
 const renderResponse = (event, response, message) => {

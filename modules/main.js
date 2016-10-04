@@ -43,17 +43,21 @@ const detector = new Detector({
 //   console.log('error');
 // });
 
+const startHotWordDetection = () => {
+  let mic = record.start({
+    threshold: 0,
+    verbose: true
+  });
+  mic.pipe(detector);
+}
+
+startHotWordDetection();
+
 detector.on('hotword', function (index, hotword) {
   console.log('hotword', index, hotword);
   electron.ipcRenderer.send("getAudioInput");
+  record.stop();
 });
-
-const mic = record.start({
-  threshold: 0,
-  verbose: true
-});
-
-mic.pipe(detector);
 
 electron.ipcRenderer.on('timetable-reply', (event, arr) => {
   hideLoading();
@@ -70,7 +74,7 @@ electron.ipcRenderer.on('timetable-reply', (event, arr) => {
     },
     events: arr
   })
-  waitForHotWord(spawn('python',["speech/srs.py", "speech/resources/hotword.pmdl"]));
+  startHotWordDetection();
 })
 
 // this is shitty way of doing, should use something like React here!
@@ -87,6 +91,7 @@ electron.ipcRenderer.on('play-video', (e, id) => {
       }
   }
   loadVideo();
+  startHotWordDetection();
 });
 
 electron.ipcRenderer.on('undefined-method', (event, str) => {
@@ -121,5 +126,5 @@ electron.ipcRenderer.on('weather-reply', (event, arr) => {
     skycons.add(`icon${i}`, data.hourly.data[i].icon);
   }
   skycons.play();
-  waitForHotWord(spawn('python',["speech/srs.py", "speech/resources/hotword.pmdl"]));
+  startHotWordDetection();
 });

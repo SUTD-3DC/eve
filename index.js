@@ -48,7 +48,7 @@ function createMainWindow() {
 }
 
 electron.ipcMain.on("getAudioInput", (event) => {
-  exec('AUDIODEV=hw:1;0 rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
+  exec('AUDIODEV=hw:1,0 rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
     var bitmap = fs.readFileSync("out.wav");
     var audioString = new Buffer(bitmap).toString('base64');
     google.speech('v1beta1').speech.syncrecognize({

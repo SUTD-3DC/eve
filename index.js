@@ -49,28 +49,32 @@ function createMainWindow() {
 
 electron.ipcMain.on("getAudioInput", (event) => {
   exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
-    var bitmap = fs.readFileSync("out.wav");
-    var audioString = new Buffer(bitmap).toString('base64');
-    google.speech('v1beta1').speech.syncrecognize({
-      "auth": authClient,
-      "resource": {
-        "config": {
-          "encoding": "LINEAR16",
-          "sampleRate": 16000,
-          "speechContext": {
-            "phrases": [ "f01", "f02", "f03", "f04", "f05", "f06", "f07", "f08", "f09"]
+    fs.readFile(inputFile, (err, audioFile) => {
+      if (err) {
+        return console.log(err);
+      }
+      var audioString = new Buffer(audioString).toString('base64');
+      google.speech('v1beta1').speech.syncrecognize({
+        "auth": authClient,
+        "resource": {
+          "config": {
+            "encoding": "LINEAR16",
+            "sampleRate": 16000,
+            "speechContext": {
+              "phrases": [ "f01", "f02", "f03", "f04", "f05", "f06", "f07", "f08", "f09"]
+            }
+          },
+          "audio": {
+            "content": audioString,
           }
-        },
-        "audio": {
-          "content": audioString,
-        }
-      }}, (err, response) => {
-        if (err) {
-          console.error(err)
-        }
-      fs.unlink("out.wav");
-      console.log(response.results[0].alternatives[0].transcript);
-      decode(event, response.results[0].alternatives[0].transcript);
+        }}, (err, response) => {
+          if (err) {
+            console.error(err)
+          }
+        fs.unlink("out.wav");
+        console.log(response.results[0].alternatives[0].transcript);
+        decode(event, response.results[0].alternatives[0].transcript);
+      });
     });
   });
 });

@@ -18,6 +18,7 @@ function hideLoading(){
 const record = require('node-record-lpcm16');
 const { Models, Detector } = require("snowboy");
 const models = new Models();
+
 models.add({
   file: 'resources/hotword.pmdl',
   sensitivity: '0.5',
@@ -30,21 +31,21 @@ const detector = new Detector({
   audioGain: 2.0
 });
 
-detector.on('silence', function () {
-  console.log('silence');
-});
+// detector.on('silence', function () {
+//   console.log('silence');
+// });
 
-detector.on('sound', function () {
-  console.log('sound');
-});
+// detector.on('sound', function () {
+//   console.log('sound');
+// });
 
-detector.on('error', function () {
-  console.log('error');
-});
+// detector.on('error', function () {
+//   console.log('error');
+// });
 
 detector.on('hotword', function (index, hotword) {
   console.log('hotword', index, hotword);
-  ipcMain.send("getAudioInput");
+  electron.ipcRenderer.send("getAudioInput");
 });
 
 const mic = record.start({

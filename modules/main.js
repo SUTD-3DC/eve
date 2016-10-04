@@ -100,6 +100,7 @@ electron.ipcRenderer.on('undefined-method', (event, str) => {
     `<h1>Sorry I couldn't understand what you said!</h1>`+
     `<h2>I heard: ${str}</h2>`
   );
+  startHotWordDetection();
 })
 
 electron.ipcRenderer.on('weather-reply', (event, arr) => {

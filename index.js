@@ -52,40 +52,39 @@ electron.ipcMain.on("getAudioInput", (event) => {
   var file = fs.createWriteStream('out.wav', { encoding: 'binary' });
   record.start()
   setTimeout(() => {
-    record.stop().pipe(file);
-    readAndParseAudioFile(file);
+    var stream = record.stop().pipe(file);
+    stream.on('finish', () => {
+      fs.readFile(inputFile, (err, data) => {
+        if (err) {
+          return console.log(err);
+        }
+        var audioString = new Buffer(data).toString('base64');
+        google.speech('v1beta1').speech.syncrecognize({
+          "auth": authClient,
+          "resource": {
+            "config": {
+              "encoding": "LINEAR16",
+              "sampleRate": 16000,
+              "speechContext": {
+                "phrases": [ "f01", "f02", "f03", "f04", "f05", "f06", "f07", "f08", "f09"]
+              }
+            },
+            "audio": {
+              "content": inputFile.toString('base64')
+            }
+          }}, (err, response) => {
+            if (err) {
+              console.error(err)
+            }
+          fs.unlink("out.wav");
+          console.log(response.results[0].alternatives[0].transcript);
+          decode(event, response.results[0].alternatives[0].transcript);
+        });
+      });
+    });
   }, 3000);
 });
 
-const readAndParseAudioFile = (inputFile) => {
-  fs.readFile(inputFile, (err, audioFile) => {
-    if (err) {
-      return console.log(err);
-    }
-    var audioString = new Buffer(audioFile).toString('base64');
-    google.speech('v1beta1').speech.syncrecognize({
-      "auth": authClient,
-      "resource": {
-        "config": {
-          "encoding": "LINEAR16",
-          "sampleRate": 16000,
-          "speechContext": {
-            "phrases": [ "f01", "f02", "f03", "f04", "f05", "f06", "f07", "f08", "f09"]
-          }
-        },
-        "audio": {
-          "content": audioString,
-        }
-      }}, (err, response) => {
-        if (err) {
-          console.error(err)
-        }
-      fs.unlink("out.wav");
-      console.log(response.results[0].alternatives[0].transcript);
-      decode(event, response.results[0].alternatives[0].transcript);
-    });
-  });
-}
 const renderResponse = (event, response, message) => {
   try {
     if (response.entities.intent !== null){

@@ -30,7 +30,7 @@ models.add({
 const startHotWordDetection = () => {
   mic = record.start({
     threshold: 0,
-    verbose: false
+    verbose: true
   });
   detector = new Detector({
     resource: "resources/common.res",

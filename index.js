@@ -49,6 +49,7 @@ function createMainWindow() {
 }
 
 electron.ipcMain.on("getAudioInput", (event) => {
+  setTimeout(() => {
   exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
     fs.readFile("out.wav", (err, data) => {
       if (err) {
@@ -78,6 +79,7 @@ electron.ipcMain.on("getAudioInput", (event) => {
       });
     });
   });
+  },3000)
 });
 
 const renderResponse = (event, response, message) => {

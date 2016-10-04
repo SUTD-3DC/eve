@@ -74,7 +74,6 @@ electron.ipcRenderer.on('timetable-reply', (event, arr) => {
     },
     events: arr
   })
-  startHotWordDetection();
 })
 
 // this is shitty way of doing, should use something like React here!
@@ -91,7 +90,6 @@ electron.ipcRenderer.on('play-video', (e, id) => {
       }
   }
   loadVideo();
-  startHotWordDetection();
 });
 
 electron.ipcRenderer.on('undefined-method', (event, str) => {
@@ -99,7 +97,6 @@ electron.ipcRenderer.on('undefined-method', (event, str) => {
     `<h1>Sorry I couldn't understand what you said!</h1>`+
     `<h2>I heard: ${str}</h2>`
   );
-  startHotWordDetection();
 })
 
 electron.ipcRenderer.on('weather-reply', (event, arr) => {
@@ -127,5 +124,4 @@ electron.ipcRenderer.on('weather-reply', (event, arr) => {
     skycons.add(`icon${i}`, data.hourly.data[i].icon);
   }
   skycons.play();
-  startHotWordDetection();
 });

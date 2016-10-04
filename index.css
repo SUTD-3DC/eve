@@ -11,10 +11,6 @@ body {
   overflow-y: hidden;
 }
 
-.darkened {
-  color: #555;
-}
-
 #calendar {
   padding: 10em;
 }

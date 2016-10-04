@@ -62,7 +62,7 @@ const readAndParseAudioFile = (inputFile) => {
     if (err) {
       return console.log(err);
     }
-    var audioString = new Buffer(audioString).toString('base64');
+    var audioString = new Buffer(audioFile).toString('base64');
     google.speech('v1beta1').speech.syncrecognize({
       "auth": authClient,
       "resource": {

@@ -48,73 +48,32 @@ function createMainWindow() {
 }
 
 electron.ipcMain.on("getAudioInput", (event) => {
-
-  // google speech relay
-  // decode(event, "what's the timetable for f01?");
   exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
-    fs.readFile("out.wav", (err, data) => {
-      google.speech('v1beta1').speech.syncrecognize({
-        "auth": authClient,
-        "resource": {
-          "config": {
-            "encoding": "LINEAR16",
-            "sampleRate": 16000,
-            "speechContext": {
-              "phrases": [ "f01", "f02", "f03", "f04", "f05", "f06", "f07", "f08", "f09"]
-            }
-          },
-          "audio": {
-            "content": data.toString("base64"),
+    var bitmap = fs.readFileSync("out.wav");
+    var audioString = new Buffer(bitmap).toString('base64');
+    google.speech('v1beta1').speech.syncrecognize({
+      "auth": authClient,
+      "resource": {
+        "config": {
+          "encoding": "LINEAR16",
+          "sampleRate": 16000,
+          "speechContext": {
+            "phrases": [ "f01", "f02", "f03", "f04", "f05", "f06", "f07", "f08", "f09"]
           }
-        }}, (err, response) => {
-          if (err) {
-            console.error(err)
-          }
-          fs.unlink("out.wav");
-          console.log(response.results[0].alternatives[0].transcript);
-          decode(event, response.results[0].alternatives[0].transcript);
-        });
-  //     request.post({
-  //       headers: { 'Content-Type': 'application/json', 'Authorization': config.speech.key},
-  //       url: 'https://speech.googleapis.com/v1beta1/speech:syncrecognize',
-  //       json: {
-  //         "config": {
-  //           "encoding":"LINEAR16",
-  //           "sample_rate": 16000
-  //         },
-  //         "audio": {
-  //           "content": data.toString('base64')
-  //         }
-  //       }
-  //     }, function(err, httpResponse, body){
-  //       console.log(httpResponse);
-  //       if (err) {
-  //         return console.error(err);
-  //       }
-  //       fs.unlink("out.wav")
-  //       ipcMain.send("decode", body.results[0].alternatives[0].transcript);
-  //     });
+        },
+        "audio": {
+          "content": audioString,
+        }
+      }}, (err, response) => {
+        if (err) {
+          console.error(err)
+        }
+      fs.unlink("out.wav");
+      console.log(response.results[0].alternatives[0].transcript);
+      decode(event, response.results[0].alternatives[0].transcript);
     });
   });
-
-  // straight to wit
-  // exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', function(){
-  //   fs.readFile("out.wav", function(err, data) {
-  //     request.post({
-  //       headers: { 'Authorization': 'Bearer ' + config.wit.key,
-  //                  'Content-Type': 'audio/wav'},
-  //       url: 'https://api.wit.ai/speech?v=20160902',
-  //       body: data
-  //     }, function(err, httpResponse, body){
-  //       if (err) {
-  //         return console.error(err);
-  //       }
-  //       fs.unlink("out.wav")
-  //       renderResponse(event, JSON.parse(body));
-  //     });
-  //   });
-  // });
-})
+});
 
 const renderResponse = (event, response, message) => {
   try {

@@ -18,17 +18,12 @@ function hideLoading(){
 const record = require('node-record-lpcm16');
 const { Models, Detector } = require("snowboy");
 const models = new Models();
+let detector;
 
 models.add({
   file: 'resources/hotword.pmdl',
   sensitivity: '0.5',
   hotwords : 'hey-eve'
-});
-
-const detector = new Detector({
-  resource: "resources/common.res",
-  models: models,
-  audioGain: 2.0
 });
 
 // detector.on('silence', function () {
@@ -46,7 +41,12 @@ const detector = new Detector({
 const startHotWordDetection = () => {
   let mic = record.start({
     threshold: 0,
-    verbose: true
+    verbose: false
+  });
+  detector = new Detector({
+    resource: "resources/common.res",
+    models: models,
+    audioGain: 2.0
   });
   mic.pipe(detector);
 }
@@ -57,7 +57,6 @@ detector.on('hotword', function (index, hotword) {
   console.log('hotword', index, hotword);
   electron.ipcRenderer.send("getAudioInput");
   $(".main").html("<h1>What do you need?</h1>");
-  record.stop();
 });
 
 electron.ipcRenderer.on('timetable-reply', (event, arr) => {

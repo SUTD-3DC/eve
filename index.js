@@ -70,7 +70,7 @@ electron.ipcMain.on("getAudioInput", (event) => {
               }
             },
             "audio": {
-              "content": inputFile.toString('base64')
+              "content": data.toString('base64')
             }
           }}, (err, response) => {
             if (err) {

@@ -56,6 +56,7 @@ startHotWordDetection();
 detector.on('hotword', function (index, hotword) {
   console.log('hotword', index, hotword);
   electron.ipcRenderer.send("getAudioInput");
+  $(".main").html("<h1>What do you need?</h1>");
   record.stop();
 });
 

@@ -45,9 +45,12 @@ startHotWordDetection();
 detector.on('hotword', function (index, hotword) {
   console.log('hotword', index, hotword);
   record.stop();
-  $(".main").html("<h1>What do you need?</h1>");
   electron.ipcRenderer.send("getAudioInput");
 });
+
+electron.ipcRenderer.on('show-waiting', () => {
+  $(".main").html("<h1>What do you need?</h1>");
+})
 
 electron.ipcRenderer.on('timetable-reply', (event, arr) => {
   hideLoading();

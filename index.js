@@ -50,6 +50,7 @@ function createMainWindow() {
 
 electron.ipcMain.on("getAudioInput", (event) => {
   setTimeout(() => {
+  event.sender.send("show-waiting");
   exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
     fs.readFile("out.wav", (err, data) => {
       if (err) {

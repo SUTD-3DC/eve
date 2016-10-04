@@ -7,7 +7,6 @@ const fs = require("fs");
 const exec = require('child_process').exec;
 
 const app = electron.app;
-const ipcMain = electron.ipcMain;
 
 const google = require('googleapis');
 
@@ -48,7 +47,7 @@ function createMainWindow() {
   return win;
 }
 
-ipcMain.on("getAudioInput", (event) => {
+electron.ipcMain.on("getAudioInput", (event) => {
 
   // google speech relay
   // decode(event, "what's the timetable for f01?");
@@ -196,7 +195,6 @@ const getWeather = (event, location) => {
     });
   });
 }
-
 const decode = (event, message) => {
   request.get(
     { headers: { "Authorization": "Bearer " + config.wit.key },

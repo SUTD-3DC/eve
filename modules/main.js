@@ -1,8 +1,6 @@
 const electron = require('electron');
-const spawn = require("child_process").spawn; // spawns a python process
 const fs = require('fs');
 
-var process = spawn('python',["speech/srs.py", "speech/resources/hotword.pmdl"]);
 var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Monday"];
 
 String.prototype.capitalizeFirstLetter = function() {
@@ -17,20 +15,49 @@ function hideLoading(){
   $(".main").html("");
 }
 
-function waitForHotWord(p){
-  p.stdout.on('data', (data) => {
-    var str = data.toString().trim();
-    if (str == "hotword"){
-      electron.ipcRenderer.send('getAudioInput');
-      showLoading();
-      p.kill('SIGKILL');
-    }
+const record = require('node-record-lpcm16');
+const { Models, Detector } = require("snowboy");
+const models = new Models();
+
+models.add({
+  file: 'resources/hotword.pmdl',
+  sensitivity: '0.5',
+  hotwords : 'hey-eve'
+});
+
+const detector = new Detector({
+  resource: "resources/common.res",
+  models: models,
+  audioGain: 2.0
+});
+
+// detector.on('silence', function () {
+//   console.log('silence');
+// });
+
+// detector.on('sound', function () {
+//   console.log('sound');
+// });
+
+// detector.on('error', function () {
+//   console.log('error');
+// });
+
+const startHotWordDetection = () => {
+  let mic = record.start({
+    threshold: 0,
+    verbose: true
   });
+  mic.pipe(detector);
 }
 
+startHotWordDetection();
 
-// electron.ipcRenderer.send('getAudioInput');
-waitForHotWord(process);
+detector.on('hotword', function (index, hotword) {
+  console.log('hotword', index, hotword);
+  electron.ipcRenderer.send("getAudioInput");
+  record.stop();
+});
 
 electron.ipcRenderer.on('timetable-reply', (event, arr) => {
   hideLoading();
@@ -47,7 +74,7 @@ electron.ipcRenderer.on('timetable-reply', (event, arr) => {
     },
     events: arr
   })
-  waitForHotWord(spawn('python',["speech/srs.py", "speech/resources/hotword.pmdl"]));
+  startHotWordDetection();
 })
 
 // this is shitty way of doing, should use something like React here!
@@ -64,6 +91,7 @@ electron.ipcRenderer.on('play-video', (e, id) => {
       }
   }
   loadVideo();
+  startHotWordDetection();
 });
 
 electron.ipcRenderer.on('undefined-method', (event, str) => {
@@ -98,5 +126,5 @@ electron.ipcRenderer.on('weather-reply', (event, arr) => {
     skycons.add(`icon${i}`, data.hourly.data[i].icon);
   }
   skycons.play();
-  waitForHotWord(spawn('python',["speech/srs.py", "speech/resources/hotword.pmdl"]));
+  startHotWordDetection();
 });

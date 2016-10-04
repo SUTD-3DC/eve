@@ -19,6 +19,7 @@ const record = require('node-record-lpcm16');
 const { Models, Detector } = require("snowboy");
 const models = new Models();
 let detector;
+let mic;
 
 models.add({
   file: 'resources/hotword.pmdl',
@@ -26,20 +27,8 @@ models.add({
   hotwords : 'hey-eve'
 });
 
-// detector.on('silence', function () {
-//   console.log('silence');
-// });
-
-// detector.on('sound', function () {
-//   console.log('sound');
-// });
-
-// detector.on('error', function () {
-//   console.log('error');
-// });
-
 const startHotWordDetection = () => {
-  let mic = record.start({
+  mic = record.start({
     threshold: 0,
     verbose: false
   });
@@ -55,6 +44,7 @@ startHotWordDetection();
 
 detector.on('hotword', function (index, hotword) {
   console.log('hotword', index, hotword);
+  record.stop();
   $(".main").html("<h1>What do you need?</h1>");
   electron.ipcRenderer.send("getAudioInput");
 });
@@ -74,6 +64,7 @@ electron.ipcRenderer.on('timetable-reply', (event, arr) => {
     },
     events: arr
   })
+  startHotWordDetection();
 })
 
 // this is shitty way of doing, should use something like React here!
@@ -90,6 +81,7 @@ electron.ipcRenderer.on('play-video', (e, id) => {
       }
   }
   loadVideo();
+  startHotWordDetection();
 });
 
 electron.ipcRenderer.on('undefined-method', (event, str) => {
@@ -97,6 +89,7 @@ electron.ipcRenderer.on('undefined-method', (event, str) => {
     `<h1>Sorry I couldn't understand what you said!</h1>`+
     `<h2>I heard: ${str}</h2>`
   );
+  startHotWordDetection();
 })
 
 electron.ipcRenderer.on('weather-reply', (event, arr) => {
@@ -124,4 +117,5 @@ electron.ipcRenderer.on('weather-reply', (event, arr) => {
     skycons.add(`icon${i}`, data.hourly.data[i].icon);
   }
   skycons.play();
+  startHotWordDetection();
 });

@@ -54,7 +54,7 @@ electron.ipcMain.on("getAudioInput", (event) => {
   setTimeout(() => {
     var stream = record.stop().pipe(file);
     stream.on('finish', () => {
-      fs.readFile(inputFile, (err, data) => {
+      fs.readFile(file.path, (err, data) => {
         if (err) {
           return console.log(err);
         }

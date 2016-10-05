@@ -51,7 +51,7 @@ function createMainWindow() {
 electron.ipcMain.on("getAudioInput", (event) => {
   event.sender.send("show-waiting");
   setTimeout(() => {
-    decode(event, "what is the timetable for f01")
+    getTimetable(event, "f01");
   }, 5000);
   // setTimeout(() => {
   // event.sender.send("show-waiting");

@@ -49,38 +49,42 @@ function createMainWindow() {
 }
 
 electron.ipcMain.on("getAudioInput", (event) => {
-  setTimeout(() => {
   event.sender.send("show-waiting");
-  exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
-    fs.readFile("out.wav", (err, data) => {
-      if (err) {
-        return console.log(err);
-      }
-      var audioString = new Buffer(data).toString('base64');
-      google.speech('v1beta1').speech.syncrecognize({
-        "auth": authClient,
-        "resource": {
-          "config": {
-            "encoding": "LINEAR16",
-            "sampleRate": 16000,
-            "speechContext": {
-              "phrases": [ "f01", "f02", "f03", "f04", "f05", "f06", "f07", "f08", "f09"]
-            }
-          },
-          "audio": {
-            "content": data.toString('base64')
-          }
-        }}, (err, response) => {
-          if (err) {
-            console.error(err)
-          }
-        fs.unlink("out.wav");
-        console.log(response.results[0].alternatives[0].transcript);
-        decode(event, response.results[0].alternatives[0].transcript);
-      });
-    });
-  });
-  },1000)
+  setTimeout(() => {
+    decode(event, "what is the timetable for f01")
+  }, 5000);
+  // setTimeout(() => {
+  // event.sender.send("show-waiting");
+  // exec('rec --encoding signed-integer --bits 16 --channels 1 --rate 16000 out.wav trim 0 3', () => {
+  //   fs.readFile("out.wav", (err, data) => {
+  //     if (err) {
+  //       return console.log(err);
+  //     }
+  //     var audioString = new Buffer(data).toString('base64');
+  //     google.speech('v1beta1').speech.syncrecognize({
+  //       "auth": authClient,
+  //       "resource": {
+  //         "config": {
+  //           "encoding": "LINEAR16",
+  //           "sampleRate": 16000,
+  //           "speechContext": {
+  //             "phrases": [ "f01", "f02", "f03", "f04", "f05", "f06", "f07", "f08", "f09"]
+  //           }
+  //         },
+  //         "audio": {
+  //           "content": data.toString('base64')
+  //         }
+  //       }}, (err, response) => {
+  //         if (err) {
+  //           console.error(err)
+  //         }
+  //       fs.unlink("out.wav");
+  //       console.log(response.results[0].alternatives[0].transcript);
+  //       decode(event, response.results[0].alternatives[0].transcript);
+  //     });
+  //   });
+  // });
+  // },1000)
 });
 
 const renderResponse = (event, response, message) => {

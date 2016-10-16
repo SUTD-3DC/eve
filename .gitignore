@@ -8,3 +8,4 @@ speech/resources/*.bin
 speech/snowboydetect.py
 speech/_snowboydetect.so
 keyfile.json
+starteve.sh

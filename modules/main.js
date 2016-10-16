@@ -67,6 +67,7 @@ electron.ipcRenderer.on('timetable-reply', (event, arr) => {
     },
     events: arr
   })
+  console.log("Restarting the hotword")
   startHotWordDetection();
 })
 
